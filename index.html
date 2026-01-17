@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Chi-Wow-Wow (Acceso Seguro)</title>
+    <title>Sistema Chi-Wow-Wow (Final Corrección Fecha)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap');
 
@@ -14,15 +14,12 @@
         /* --- PANTALLA DE BLOQUEO (LOGIN) --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #1B2631; /* Fondo Azul */
-            z-index: 10000; /* Capa superior */
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column;
+            background-color: #1B2631; z-index: 10000;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
         }
         .login-box {
             background: white; padding: 40px; border-radius: 12px;
-            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            width: 90%; max-width: 320px;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 90%; max-width: 320px;
         }
         .login-logo { max-width: 140px; margin-bottom: 20px; }
         .login-input {
@@ -36,10 +33,10 @@
         .login-btn:hover { background-color: #b7950b; }
         .error-msg { color: #e74c3c; font-weight: bold; font-size: 13px; margin-top: 15px; display: none; }
 
-        /* --- SISTEMA OCULTO --- */
-        .main-container { max-width: 950px; margin: 0 auto; display: none; /* OCULTO POR DEFECTO */ }
+        /* --- SISTEMA PRINCIPAL --- */
+        .main-container { max-width: 950px; margin: 0 auto; display: none; }
 
-        /* --- RESTO DEL DISEÑO --- */
+        /* --- CONTROLES Y FORMULARIO --- */
         .control-panel { background: white; padding: 25px; border-radius: 12px; margin-bottom: 40px; border-top: 6px solid var(--brand-dark); }
         .panel-title { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--brand-dark); text-align: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px; }
@@ -47,34 +44,78 @@
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         .btn-action { background-color: var(--brand-dark); color: white; border: none; padding: 15px; width: 100%; font-weight: 700; border-radius: 6px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
         
-        /* HOJAS */
-        .document-page { display: none; background: white; width: 21.59cm; height: 27.94cm; margin: 0 auto 40px auto; padding: 1.5cm 2cm; position: relative; overflow: hidden; }
-        
-        /* ESTILOS IMPRESION */
+        /* --- HOJAS DE DOCUMENTO (Restaurado a versión PRO) --- */
+        .document-page { 
+            display: none; 
+            background: white; 
+            width: 21.59cm; 
+            height: 27.94cm; /* Carta exacta */
+            margin: 0 auto 40px auto; 
+            padding: 1.5cm 2cm; /* Márgenes optimizados */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            box-sizing: border-box; 
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        /* HEADER GENERAL */
         header { display: flex; justify-content: space-between; border-bottom: 3px solid var(--brand-dark); padding-bottom: 15px; margin-bottom: 25px; }
-        .logo-img { max-width: 130px; }
+        .logo-img { max-width: 130px; margin-bottom: 5px; }
+        .company-branding h1 { font-family: 'Montserrat', sans-serif; font-size: 18px; color: var(--brand-dark); margin: 0; text-transform: uppercase; font-weight: 700; }
+        .fiscal-details { font-size: 0.7rem; color: #7F8C8D; line-height: 1.4; margin-top: 5px; }
+
+        /* RECIBO */
         .info-columns { display: flex; gap: 20px; background: var(--bg-light); padding: 15px; margin-bottom: 25px; border-radius: 8px; }
         .info-box { flex: 1; }
-        .concept-table { width: 100%; border-collapse: separate; margin-bottom: 25px; }
-        .concept-table th { background: var(--brand-dark); color: white; padding: 8px; text-align: left; font-size: 0.8rem; }
-        .concept-table td { padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .concept-table { width: 100%; border-collapse: separate; margin-bottom: 25px; border-spacing: 0; border: 1px solid #eee; border-radius: 8px; }
+        .concept-table th { background: var(--brand-dark); color: white; padding: 10px; text-align: left; font-size: 0.8rem; font-weight: 600; }
+        .concept-table td { padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
         
-        /* CONTRATO */
+        /* CONTRATO (DISEÑO DENSO Y LEGAL) */
         #contract-document.flex-mode { display: flex !important; flex-direction: column; justify-content: space-between; }
-        .contract-header-flex { display: flex; justify-content: space-between; border-bottom: 2px solid var(--brand-gold); padding-bottom: 10px; margin-bottom: 15px; }
-        .contract-logo { max-height: 50px; }
-        .contract-body { font-size: 9pt; text-align: justify; line-height: 1.3; color: #333; flex-grow: 1; }
-        .signatures { display: flex; justify-content: space-between; gap: 40px; margin-top: 10px; }
-        .sign-box { flex: 1; border-top: 1px solid var(--brand-dark); text-align: center; padding-top: 5px; font-size: 8pt; font-weight: 700; }
-        .controls { text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 20px; padding-bottom: 50px; }
-        .btn-secondary { background: #95a5a6; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        
+        .contract-header-flex { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--brand-gold); padding-bottom: 10px; margin-bottom: 15px; }
+        .contract-logo { max-height: 50px; width: auto; margin-bottom: 5px; }
+        .contract-meta-box { display: flex; justify-content: space-between; font-size: 9pt; margin-bottom: 15px; background: var(--bg-light); padding: 8px 12px; border-radius: 4px; border-left: 4px solid var(--brand-dark); }
+        
+        /* CUERPO LEGAL COMPLETO */
+        .contract-body { 
+            font-size: 9pt; /* Letra 9pt para que quepa todo */
+            text-align: justify; 
+            line-height: 1.3; 
+            color: #333; 
+            flex-grow: 1; 
+        }
+        .contract-clause { margin-bottom: 8px; } 
+        .clause-title { 
+            color: var(--brand-dark); font-family: 'Montserrat', sans-serif; font-weight: 700; text-transform: uppercase; 
+            display: block; margin-bottom: 2px; font-size: 9.5pt; 
+            border-bottom: 1px solid #ccc; 
+        }
+        .sub-clause { margin-bottom: 2px; padding-left: 0; position: relative; }
+        .sub-clause strong { color: var(--brand-dark); font-weight: 600; }
+        
+        /* PIE DE PÁGINA Y FIRMAS */
+        .bottom-section { margin-top: 10px; padding-top: 5px; }
+        .manual-space-indicator { height: 30px; border-bottom: 1px dashed #ddd; margin-bottom: 10px; }
+        .legal-footer { margin-bottom: 10px; font-size: 7.5pt; color: #555; text-align: justify; border-top: 1px solid #eee; padding-top: 5px; }
+        .acceptance-text { text-align: center; margin: 10px 0; font-weight: 700; font-size: 8.5pt; color: var(--brand-dark); text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .signatures { display: flex; justify-content: space-between; gap: 40px; margin-top: 5px; margin-bottom: 20px; }
+        .sign-box { flex: 1; border-top: 1px solid var(--brand-dark); text-align: center; padding-top: 5px; font-size: 8pt; font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--brand-dark); }
 
+        .controls { text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 20px; padding-bottom: 50px; }
+        .btn-secondary { background: #95a5a6; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-weight: 600; font-family: 'Montserrat'; }
+
+        /* IMPRESIÓN */
         @media print {
-            body { background: white; padding: 0; }
+            body { background: white; padding: 0; margin: 0; }
             #login-overlay, .control-panel, .controls { display: none !important; }
             .main-container { display: block !important; }
-            .document-page { display: block; width: 21.59cm; height: 27.94cm; margin: 0; padding: 1.5cm 2cm; page-break-after: always; }
+            .document-page { display: block; width: 21.59cm; height: 27.94cm; margin: 0; padding: 1.5cm 2cm; page-break-after: always; box-shadow: none; overflow: hidden; }
             .document-page:last-child { page-break-after: avoid; }
+            #contract-document { display: flex !important; flex-direction: column; justify-content: space-between; }
+            .manual-space-indicator::after { display: none; }
         }
     </style>
 </head>
@@ -83,9 +124,9 @@
     <div id="login-overlay">
         <div class="login-box">
             <img src="chiwowow 2.png" alt="Logo" class="login-logo">
-            <h3 style="margin: 0 0 15px 0; color:#1B2631;">ACCESO CHI-WOW-WOW</h3>
+            <h3 style="margin: 0 0 15px 0; color:#1B2631; font-family:'Montserrat';">ACCESO SEGURO</h3>
             <input type="password" id="pass" class="login-input" placeholder="Contraseña">
-            <button class="login-btn" onclick="entrar()">ENTRAR</button>
+            <button class="login-btn" onclick="entrar()">ENTRAR AL SISTEMA</button>
             <p id="aviso" class="error-msg">❌ Contraseña incorrecta</p>
         </div>
     </div>
@@ -93,7 +134,7 @@
     <div class="main-container" id="sistema">
 
         <div class="control-panel" id="input-form">
-            <h2 class="panel-title">Nuevo Recibo / Contrato</h2>
+            <h2 class="panel-title">Generador de Documentos</h2>
             
             <div class="form-grid">
                 <div class="form-group">
@@ -102,7 +143,7 @@
                 </div>
                 <div class="form-group">
                     <label>Teléfono</label>
-                    <input type="text" id="in_tel" placeholder="614...">
+                    <input type="text" id="in_tel" placeholder="Contacto">
                 </div>
                 <div class="form-group">
                     <label>Email</label>
@@ -112,7 +153,7 @@
 
             <div class="form-grid">
                 <div class="form-group" style="grid-column: span 2;">
-                    <label>Servicio</label>
+                    <label>Servicio Contratado</label>
                     <select id="in_servicio" onchange="toggleOtro(this)">
                         <option value="Expedición Creel y Chepe">Expedición Creel y Chepe</option>
                         <option value="Viaje a la Huasteca Potosina">Viaje a la Huasteca Potosina</option>
@@ -124,7 +165,7 @@
                     <input type="text" id="in_servicio_otro" style="display:none; margin-top:5px; background:#f0f0f0;" placeholder="Escriba el nombre del servicio...">
                 </div>
                 <div class="form-group">
-                    <label>Fechas</label>
+                    <label>Fechas del Viaje</label>
                     <input type="text" id="in_fechas" placeholder="Ej. 12 al 15 Oct">
                 </div>
                 <div class="form-group">
@@ -140,7 +181,7 @@
 
             <div class="form-grid" style="border-top: 2px solid #eee; padding-top:20px; margin-top:20px;">
                 <div class="form-group">
-                    <label>Total ($)</label>
+                    <label>Costo Total ($)</label>
                     <input type="number" id="in_total" placeholder="0.00">
                 </div>
                 <div class="form-group">
@@ -150,73 +191,78 @@
                 <div class="form-group">
                     <label>Método de Pago</label>
                     <select id="in_metodo">
-                        <option>Transferencia</option>
-                        <option>Depósito</option>
-                        <option>Tarjeta</option>
+                        <option>Transferencia Electrónica</option>
+                        <option>Depósito Bancario</option>
+                        <option>Tarjeta de Crédito/Débito</option>
                         <option>Efectivo</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Fecha Emisión</label>
+                    <label style="color:#c0392b;">Fecha de Emisión (Recibo)</label>
                     <input type="date" id="in_fecha">
                 </div>
             </div>
 
-            <button class="btn-action" onclick="generar()">GENERAR DOCUMENTOS</button>
+            <button class="btn-action" onclick="generar()">GENERAR PDF / IMPRIMIR</button>
         </div>
 
         <div id="receipt-document" class="document-page">
             <header>
-                <div>
-                    <img src="chiwowow 2.png" class="logo-img">
-                    <div style="font-weight:700; color:#1B2631; font-family:'Montserrat'; font-size:18px;">CHIWOW-WOW A & T</div>
+                <div class="company-branding">
+                    <img src="chiwowow 2.png" alt="Logo" class="logo-img">
+                    <h1>CHIWOW-WOW A & T</h1>
                     <div class="fiscal-details">
                         <strong>RAZÓN SOCIAL:</strong> CHIWOW-WOW A & T, S.A. DE C.V.<br>
                         <strong>RFC:</strong> CAT2205094P0<br>
                         Av. Heroico Colegio Militar #7716, Chihuahua, Chih.<br>
+                        Régimen: Sociedad Anónima de Capital Variable
                     </div>
                 </div>
-                <div style="text-align:right;">
-                    <div style="font-family:'Montserrat'; font-weight:700; font-size:24px; color:#1B2631;">RECIBO</div>
-                    <div style="color:#D4AF37; font-weight:700; font-size:1.2rem; margin-top:5px;" id="out_folio">#00000</div>
-                    <div style="font-size:0.9rem; margin-top:5px;" id="out_fecha_emision"></div>
+                <div class="receipt-meta">
+                    <div style="font-family:'Montserrat'; font-weight:700; font-size:24px; color:#1B2631; text-align:right;">RECIBO OFICIAL</div>
+                    <div style="color:#D4AF37; font-weight:700; font-size:1.2rem; margin-top:5px; text-align:right;" id="out_folio">#00000</div>
+                    <div style="font-size:0.9rem; margin-top:5px; text-align:right; color:#7F8C8D;">Fecha: <span id="out_fecha_emision"></span></div>
                 </div>
             </header>
 
             <div class="info-columns">
                 <div class="info-box">
-                    <div style="font-weight:700; color:#1B2631; border-bottom:2px solid #D4AF37; display:inline-block; margin-bottom:5px;">CLIENTE</div>
-                    <div id="out_cliente" style="font-weight:600;"></div>
-                    <div id="out_tel"></div>
-                    <div id="out_email"></div>
+                    <div style="font-family:'Montserrat'; font-size:0.8rem; text-transform:uppercase; color:#1B2631; font-weight:700; border-bottom:2px solid #D4AF37; margin-bottom:8px;">Datos del Cliente</div>
+                    <p><strong id="out_cliente" style="font-size: 1.1rem;"></strong></p>
+                    <p>Tel: <span id="out_tel"></span></p>
+                    <p>Email: <span id="out_email"></span></p>
                 </div>
-                <div class="info-box" style="border-left:1px solid #ccc; padding-left:20px;">
-                    <div style="font-weight:700; color:#1B2631; border-bottom:2px solid #D4AF37; display:inline-block; margin-bottom:5px;">SERVICIO</div>
-                    <div id="out_servicio" style="font-weight:600;"></div>
-                    <div>Fechas: <span id="out_fechas"></span></div>
-                    <div>Pax: <span id="out_pax"></span></div>
+                <div class="info-box" style="border-left: 2px solid #eee; padding-left: 30px;">
+                    <div style="font-family:'Montserrat'; font-size:0.8rem; text-transform:uppercase; color:#1B2631; font-weight:700; border-bottom:2px solid #D4AF37; margin-bottom:8px;">Detalles del Servicio</div>
+                    <p><strong id="out_servicio" style="font-size: 1.1rem;"></strong></p>
+                    <p>Fechas: <span id="out_fechas"></span></p>
+                    <p>Pax: <span id="out_pax"></span> Personas</p>
                 </div>
             </div>
 
             <table class="concept-table">
-                <thead><tr><th>Concepto</th><th style="text-align:right;">Importe</th></tr></thead>
+                <thead><tr><th style="width:55%;">Descripción</th><th style="width:25%;">Método</th><th style="text-align:right; width:20%;">Importe</th></tr></thead>
                 <tbody>
                     <tr>
-                        <td>Costo Total del Servicio<br><small id="out_notas" style="font-style:italic; color:#666;"></small></td>
+                        <td>Costo Total del Servicio Turístico<br><small id="out_notas" style="font-style:italic; color:#7F8C8D;"></small></td>
+                        <td style="text-align: center;">-</td>
                         <td style="text-align:right; font-weight:600;" id="out_total"></td>
                     </tr>
                     <tr>
-                        <td>Abono Recibido (<span id="out_metodo"></span>)</td>
-                        <td style="text-align:right; color:#c0392b;" id="out_abono"></td>
+                        <td>Abono a Cuenta Recibido</td>
+                        <td id="out_metodo" style="text-align: center;"></td>
+                        <td style="text-align:right; color:#c0392b; font-weight:600;" id="out_abono"></td>
                     </tr>
                 </tbody>
             </table>
 
-            <div style="text-align:right; margin-top:20px; font-size:1.2rem; font-weight:700; color:#1B2631;">
-                Saldo Pendiente: <span id="out_saldo"></span>
+            <div style="text-align:right; margin-left: auto; width: 300px;">
+                <div style="font-size: 1.2rem; color: #1B2631; font-weight: 700; border-top: 3px solid #D4AF37; padding-top: 10px; text-align: right;">
+                    Saldo Pendiente: <span id="out_saldo"></span>
+                </div>
             </div>
             
-            <div style="position:absolute; bottom:30px; width:100%; text-align:center; font-size:0.7rem; color:#888;">
+            <div style="text-align:center; font-size:0.75rem; color:#7F8C8D; position: absolute; bottom: 40px; width: 85%; left: 50%; transform: translateX(-50%);">
                 Este documento es un comprobante interno. Tel: 614 286 0572.
             </div>
         </div>
@@ -225,60 +271,70 @@
             <div class="contract-header-flex">
                 <div>
                     <img src="chiwowow 2.png" class="contract-logo">
-                    <div style="font-weight:700; font-size:12px;">CHIWOW-WOW A & T</div>
+                    <div style="font-family: 'Montserrat'; font-weight: 700; color: #1B2631; font-size: 12px;">CHIWOW-WOW A & T</div>
                 </div>
                 <div style="text-align:right;">
-                    <div style="font-weight:700; font-size:16px;">CONTRATO DE SERVICIOS</div>
-                    <div style="font-size:10px; color:#D4AF37; font-weight:700;">FOLIO: <span id="contrato_folio"></span></div>
+                    <div style="color: #1B2631; font-family: 'Montserrat'; font-size: 16px; font-weight: 700;">CONTRATO DE SERVICIOS</div>
+                    <div style="font-family: 'Montserrat'; font-size: 10px; color: #D4AF37; font-weight: 700;">FOLIO: <span id="contrato_folio"></span></div>
                 </div>
             </div>
 
-            <div style="background:#f9f9f9; padding:10px; margin-bottom:15px; border-left:4px solid #1B2631; display:flex; justify-content:space-between; font-size:9pt;">
-                <div><strong>TITULAR:</strong> <span id="contrato_cliente"></span></div>
-                <div><strong>FECHA:</strong> <span id="contrato_fecha"></span></div>
+            <div class="contract-meta-box">
+                <div><span style="font-weight: 700; color: #7F8C8D;">TITULAR:</span> <span id="contrato_cliente" style="font-weight: 600; color: #1B2631;"></span></div>
+                <div><span style="font-weight: 700; color: #7F8C8D;">FECHA:</span> <span id="contrato_fecha" style="font-weight: 600; color: #1B2631;"></span></div>
             </div>
 
             <div class="contract-body">
-                <p>Contrato de servicios turísticos entre <strong>CHIWOW-WOW A & T, S.A. DE C.V.</strong> y "EL CLIENTE". Al realizar cualquier pago, se aceptan las siguientes cláusulas:</p>
+                <p style="margin-bottom: 10px;">Contrato de prestación de servicios turísticos celebrado entre <strong>CHIWOW-WOW A & T, S.A. DE C.V.</strong> ("LA EMPRESA") y "EL CLIENTE", <strong>quien suscribe por sí mismo y en representación de sus acompañantes</strong>. Al realizar cualquier pago, las partes aceptan las siguientes cláusulas:</p>
 
                 <div class="contract-clause">
                     <span class="clause-title">1. COMPROMISO Y GARANTÍA</span>
-                    <div class="sub-clause"><strong>Calidad y Seguridad:</strong> Unidades garantizadas en óptimas condiciones, operadores con Licencia Federal y Seguro de Viajero vigente.</div>
+                    <div class="sub-clause"><strong>Calidad:</strong> Unidades garantizadas en óptimas condiciones mecánicas, de limpieza e higiene, con A/C funcional.</div>
+                    <div class="sub-clause"><strong>Seguridad Legal:</strong> Servicio por operadores con <strong>Licencia Federal vigente</strong>. Unidades con permisos federales, placas y <strong>Póliza de Seguro de Viajero</strong> con cobertura amplia para todos los ocupantes a bordo.</div>
+                    <div class="sub-clause"><strong>Cumplimiento:</strong> Se respetarán itinerarios y horarios pactados, garantizando el servicio contratado (salvo fuerza mayor).</div>
                 </div>
 
                 <div class="contract-clause">
                     <span class="clause-title">2. PAGOS Y LIQUIDACIÓN</span>
-                    <div class="sub-clause"><strong>Anticipo:</strong> NO REEMBOLSABLE. Garantiza disponibilidad.</div>
-                    <div class="sub-clause"><strong>Liquidación:</strong> Debe cubrirse 100% al menos <strong>3 días (72 horas) antes</strong> del viaje, de lo contrario se cancela sin devolución.</div>
+                    <div class="sub-clause"><strong>Anticipo:</strong> Todo anticipo, reserva o apartado es <strong>NO REEMBOLSABLE</strong>. Garantiza la disponibilidad y gastos administrativos.</div>
+                    <div class="sub-clause"><strong>Liquidación:</strong> El servicio debe liquidarse al 100% al menos <strong>3 días (72 horas) antes</strong> del viaje. De no ser así, se cancelará sin devolución.</div>
                 </div>
 
                 <div class="contract-clause">
-                    <span class="clause-title">3. CANCELACIÓN</span>
-                    <div class="sub-clause"><strong>Por Cliente:</strong> Cancelación o "No Show" no tiene devolución (pena convencional).</div>
-                    <div class="sub-clause"><strong>Fuerza Mayor:</strong> (Clima, bloqueos) Se ofrece CAMBIO DE FECHA, no reembolso.</div>
+                    <span class="clause-title">3. POLÍTICAS DE CANCELACIÓN</span>
+                    <div class="sub-clause"><strong>Por el Cliente:</strong> Si cancela o no se presenta (<strong>"No Show"</strong>), <strong>NO HABRÁ DEVOLUCIONES</strong>. El pago es pena convencional.</div>
+                    <div class="sub-clause"><strong>Fuerza Mayor:</strong> Si el viaje no se realiza por causas ajenas a LA EMPRESA (clima, bloqueos, fallas), la única opción es <strong>CAMBIO DE FECHA</strong>. No hay reembolsos.</div>
                 </div>
 
                 <div class="contract-clause">
-                    <span class="clause-title">4. REGLAMENTO</span>
-                    <div class="sub-clause"><strong>Prohibido:</strong> Alcohol, estupefacientes y fumar/vapear en la unidad.</div>
-                    <div class="sub-clause"><strong>Daños:</strong> El cliente cubre costos por daños o suciedad excesiva de inmediato.</div>
+                    <span class="clause-title">4. REGLAMENTO, CONDUCTA Y RESPONSABILIDAD</span>
+                    <div class="sub-clause"><strong>Prohibiciones:</strong> Estrictamente <strong>PROHIBIDO</strong> consumir alcohol, estupefacientes o fumar (incluyendo "vapes") dentro de la unidad.</div>
+                    <div class="sub-clause"><strong>Responsabilidad:</strong> EL CLIENTE cubre de inmediato cualquier daño o suciedad excesiva causada por él o sus acompañantes.</div>
+                    <div class="sub-clause"><strong>Autoridad:</strong> El operador puede bajar a cualquier persona con conducta agresiva o peligrosa, sin derecho a reembolso.</div>
                 </div>
 
                 <div class="contract-clause">
-                    <span class="clause-title">5. LOGÍSTICA</span>
-                    <div class="sub-clause"><strong>Tolerancia:</strong> Máximo 10 minutos a la salida.</div>
+                    <span class="clause-title">5. LOGÍSTICA Y SEGURIDAD</span>
+                    <div class="sub-clause"><strong>Tolerancia:</strong> Máximo <strong>10 minutos</strong> de tolerancia a la salida. Transcurrido este tiempo, la unidad partirá sin responsabilidad.</div>
+                    <div class="sub-clause"><strong>Seguro:</strong> Cubre exclusivamente mientras EL CLIENTE esté a bordo. No cubre accidentes externos ni objetos olvidados.</div>
                 </div>
             </div>
 
             <div class="bottom-section">
                 <div class="manual-space-indicator"></div>
                 <div class="legal-footer">
-                    JURISDICCIÓN: Tribunales de Chihuahua, Chih. Renunciando a cualquier otro fuero.
+                    <strong>JURISDICCIÓN:</strong> Para la interpretación y cumplimiento de este contrato, las partes se someten a la jurisdicción de los tribunales de <strong>Chihuahua, Chih.</strong>, renunciando a cualquier otro fuero por razón de sus domicilios.
                 </div>
-                <div class="acceptance-text">ACEPTO TÉRMINOS Y CONDICIONES</div>
+                <div class="acceptance-text">LEÍDO LO ANTERIOR, ACEPTO INCONDICIONALMENTE LOS TÉRMINOS.</div>
                 <div class="signatures">
-                    <div class="sign-box"><br><br><br>CHIWOW-WOW A & T</div>
-                    <div class="sign-box"><br><br><br>CLIENTE TITULAR</div>
+                    <div class="sign-box">
+                        <br><br><br>
+                        FIRMA REPRESENTANTE<br>CHIWOW-WOW A & T
+                    </div>
+                    <div class="sign-box">
+                        <br><br><br>
+                        FIRMA CLIENTE TITULAR<br><span id="firma_nombre_cliente" class="sign-client-name"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -296,44 +352,54 @@
             var pass = document.getElementById('pass').value;
             var aviso = document.getElementById('aviso');
 
-            // *** AQUÍ ESTÁ TU CONTRASEÑA ***
-            // Si quieres cambiarla, cambia la palabra "chiwowow"
             if (pass.toLowerCase() === "grchiwowow") {
-                // Si es correcta:
-                document.getElementById('login-overlay').style.display = 'none'; // Oculta login
-                document.getElementById('sistema').style.display = 'block';    // Muestra sistema
+                document.getElementById('login-overlay').style.display = 'none'; 
+                document.getElementById('sistema').style.display = 'block';    
             } else {
-                // Si es incorrecta:
                 aviso.style.display = 'block';
-                document.getElementById('pass').value = ''; // Borra lo escrito
+                document.getElementById('pass').value = ''; 
             }
         }
-
-        // Permitir entrar con tecla ENTER
         document.getElementById('pass').addEventListener("keypress", function(e) {
             if (e.key === "Enter") entrar();
         });
 
         // --- FUNCIONES DEL SISTEMA ---
+        
+        // Poner fecha de hoy por defecto al cargar, PERO permitir cambiarla
         document.getElementById('in_fecha').valueAsDate = new Date();
 
         function toggleOtro(select) {
             var otroInput = document.getElementById('in_servicio_otro');
             if (select.value === 'OTRO') {
                 otroInput.style.display = 'block';
+                otroInput.focus();
             } else {
                 otroInput.style.display = 'none';
+                otroInput.value = ''; 
             }
         }
 
         function generar() {
             var nombre = document.getElementById('in_nombre').value || ".............................";
             var folio = "CWW-" + Math.floor(10000 + Math.random() * 90000);
-            var fechaHoy = new Date(document.getElementById('in_fecha').value).toLocaleDateString('es-MX');
+            
+            // --- CORRECCIÓN DE FECHA ---
+            // Tomamos el valor exacto del input (YYYY-MM-DD) y lo formateamos manualmente
+            // Esto evita que se reste un día por la zona horaria
+            var fechaRaw = document.getElementById('in_fecha').value; 
+            var fechaFmt = "";
+            
+            if(fechaRaw) {
+                var partes = fechaRaw.split('-'); // Divide en [2026, 01, 17]
+                fechaFmt = partes[2] + '/' + partes[1] + '/' + partes[0]; // 17/01/2026
+            } else {
+                fechaFmt = "N/A";
+            }
 
             // Llenar datos en Recibo
             document.getElementById('out_folio').innerText = folio;
-            document.getElementById('out_fecha_emision').innerText = fechaHoy;
+            document.getElementById('out_fecha_emision').innerText = fechaFmt; // Usa la fecha corregida
             document.getElementById('out_cliente').innerText = nombre;
             document.getElementById('out_tel').innerText = document.getElementById('in_tel').value;
             document.getElementById('out_email').innerText = document.getElementById('in_email').value;
@@ -361,15 +427,16 @@
 
             var divSaldo = document.getElementById('out_saldo');
             if(saldo <= 0.1) {
-                divSaldo.innerHTML = "<span style='color:green'>" + fmt.format(0) + " (LIQUIDADO)</span>";
+                divSaldo.innerHTML = "<span style='color:#27ae60'>" + fmt.format(0) + " (LIQUIDADO)</span>";
             } else {
-                divSaldo.innerHTML = "<span style='color:red'>" + fmt.format(saldo) + "</span>";
+                divSaldo.innerHTML = "<span style='color:#c0392b'>" + fmt.format(saldo) + "</span>";
             }
 
             // Llenar datos en Contrato
             document.getElementById('contrato_folio').innerText = folio;
             document.getElementById('contrato_cliente').innerText = nombre;
-            document.getElementById('contrato_fecha').innerText = fechaHoy;
+            document.getElementById('contrato_fecha').innerText = fechaFmt; // Usa la fecha corregida
+            document.getElementById('firma_nombre_cliente').innerText = nombre;
 
             // Mostrar documentos
             document.getElementById('input-form').style.display = 'none';
@@ -393,4 +460,3 @@
     </script>
 </body>
 </html>
-
