@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Chi-Wow-Wow PRO (Expediente + Excel)</title>
+    <title>Sistema Chi-Wow-Wow PRO (Excel Corregido)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap');
 
@@ -185,6 +185,7 @@
             <div class="form-group">
                 <label>Nombres de Acompañantes (IMPORTANTE PARA EL GRUPO)</label>
                 <textarea id="in_acompanantes" rows="2" placeholder="Ej: María Pérez, Juanito Pérez (8 años)..."></textarea>
+                <small style="color:#777;">Separa los nombres con "enter" o comas. En el Excel saldrán en lista vertical.</small>
             </div>
 
             <div class="form-grid">
@@ -262,7 +263,7 @@
                 </div>
             </div>
 
-            <button class="btn-export" onclick="exportarExcel()">📥 Descargar Excel del Grupo Completo</button>
+            <button class="btn-export" onclick="exportarExcel()">📥 Descargar REPORTE (Excel/XLS)</button>
             
             <div class="db-table-container">
                 <table class="db-table" id="tabla-ventas">
@@ -709,31 +710,83 @@
             }
         }
 
+        // --- EXPORTACIÓN MEJORADA (XLS HTML CON FORMATO VERTICAL) ---
         function exportarExcel() {
             var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
             if(registros.length === 0) { alert("No hay datos para exportar"); return; }
             
-            // CABECERAS DEL CSV
-            var csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Folio,Fecha,Cliente Titular,Grupo / Acompañantes,Tel,Email,Destino,Fechas Viaje,Pax,Total,Pagado,Saldo,Estado\n";
+            // Construimos una tabla HTML que Excel interpretará como hoja de cálculo
+            // El META CHARSET UTF-8 es clave para que salgan bien los acentos
             
+            var tableContent = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        table { border-collapse: collapse; width: 100%; }
+                        th { background-color: #1B2631; color: white; border: 1px solid #000; padding: 10px; }
+                        td { border: 1px solid #ccc; padding: 10px; vertical-align: top; white-space: pre-wrap; }
+                        .text-cell { mso-number-format:"\@"; } /* Fuerza formato texto para teléfonos */
+                    </style>
+                </head>
+                <body>
+                <table>
+                <thead>
+                    <tr>
+                        <th>Folio</th>
+                        <th>Fecha</th>
+                        <th>Cliente Titular</th>
+                        <th>Grupo / Acompañantes</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Destino</th>
+                        <th>Fechas Viaje</th>
+                        <th>Pax</th>
+                        <th>Total</th>
+                        <th>Pagado</th>
+                        <th>Saldo</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
             registros.forEach(function(row) {
-                // Limpiamos comas para no romper las columnas del CSV
-                var limpioNombre = row.nombre.replace(/,/g, " ");
-                var limpioAcomp = row.acompanantes ? row.acompanantes.replace(/,/g, " - ").replace(/\n/g, " / ") : "Sin grupo";
+                // Truco para lista vertical: Reemplazamos comas y enters por <br>
+                // Excel interpreta <br> como salto de línea dentro de la celda
+                var listaVertical = row.acompanantes ? row.acompanantes.replace(/,/g, "<br>").replace(/\n/g, "<br>") : "Sin grupo";
                 
-                var rowString = `${row.folio},${row.fechaEmision},${limpioNombre},${limpioAcomp},${row.tel},${row.email},${row.servicio},${row.fechasViaje},${row.pax},${row.total},${row.pagado},${row.saldo},${row.estado}`;
-                csvContent += rowString + "\n";
+                tableContent += `
+                    <tr>
+                        <td>${row.folio}</td>
+                        <td>${row.fechaEmision}</td>
+                        <td><strong>${row.nombre}</strong></td>
+                        <td>${listaVertical}</td>
+                        <td class="text-cell">${row.tel}</td>
+                        <td>${row.email}</td>
+                        <td>${row.servicio}</td>
+                        <td>${row.fechasViaje}</td>
+                        <td>${row.pax}</td>
+                        <td>${row.total}</td>
+                        <td>${row.pagado}</td>
+                        <td>${row.saldo}</td>
+                        <td>${row.estado}</td>
+                    </tr>
+                `;
             });
-            
-            var encodedUri = encodeURI(csvContent);
+
+            tableContent += "</tbody></table></body></html>";
+
+            // Generamos el archivo .xls (Excel reconoce HTML si tiene esta extensión)
+            var blob = new Blob([tableContent], { type: 'application/vnd.ms-excel' });
+            var url = URL.createObjectURL(blob);
             var link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Ventas_Chiwowow_" + new Date().toISOString().slice(0,10) + ".csv");
+            link.href = url;
+            link.download = "Reporte_Chiwowow_" + new Date().toISOString().slice(0,10) + ".xls";
             document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
 </html>
-
