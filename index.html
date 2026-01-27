@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Chi-Wow-Wow PRO (Excel Corregido)</title>
+    <title>Sistema Chi-Wow-Wow PRO (Con Respaldos)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap');
 
         /* --- ESTILOS GENERALES --- */
-        :root { --brand-dark: #1B2631; --brand-gold: #D4AF37; --text-main: #2C3E50; --bg-light: #F4F6F6; --success: #27ae60; --danger: #c0392b; --warning: #f39c12; }
+        :root { --brand-dark: #1B2631; --brand-gold: #D4AF37; --text-main: #2C3E50; --bg-light: #F4F6F6; --success: #27ae60; --danger: #c0392b; --warning: #f39c12; --cloud: #3498db; }
         body { font-family: 'Open Sans', sans-serif; background-color: #525659; margin: 0; padding: 20px; color: var(--text-main); }
 
         /* --- PANTALLA DE BLOQUEO (LOGIN) --- */
@@ -36,9 +36,10 @@
         .main-container { max-width: 1200px; margin: 0 auto; display: none; }
 
         /* --- NAVEGACIÓN SUPERIOR --- */
-        .nav-bar { display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end; }
+        .nav-bar { display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end; flex-wrap: wrap; }
         .nav-btn { background: #34495e; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
         .nav-btn.active { background: #D4AF37; }
+        .nav-btn.backup { background: var(--cloud); }
 
         /* --- CONTROLES Y FORMULARIO --- */
         .control-panel { background: white; padding: 25px; border-radius: 12px; margin-bottom: 40px; border-top: 6px solid var(--brand-dark); }
@@ -77,7 +78,12 @@
         .btn-icon { border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 5px; color: white; }
         .btn-delete { background: #e74c3c; }
         .btn-edit { background: #f39c12; }
-        .btn-export { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; margin-bottom: 10px; }
+        
+        .cloud-controls { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-cloud { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: 700; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-export-db { background: #3498db; }
+        .btn-import-db { background: #8e44ad; }
+        .btn-excel { background: #27ae60; }
 
         /* --- HOJAS DE DOCUMENTO --- */
         .document-page { 
@@ -263,7 +269,21 @@
                 </div>
             </div>
 
-            <button class="btn-export" onclick="exportarExcel()">📥 Descargar REPORTE (Excel/XLS)</button>
+            <div class="control-panel" style="background:#f4f6f6; border:none; padding:15px; margin-bottom:20px;">
+                <h4 style="margin-top:0; color:#555;">💾 RESPALDO EN LA NUBE</h4>
+                <div class="cloud-controls">
+                    <button class="btn-cloud btn-export-db" onclick="descargarRespaldo()">
+                        ⬇️ GUARDAR RESPALDO (Descargar)
+                    </button>
+                    <button class="btn-cloud btn-import-db" onclick="document.getElementById('input-restore').click()">
+                        ⬆️ CARGAR RESPALDO (Restaurar)
+                    </button>
+                    <input type="file" id="input-restore" style="display:none" accept=".json" onchange="cargarRespaldo(this)">
+                </div>
+                <small style="color:#777;">Instrucciones: Descarga el respaldo y guárdalo en tu carpeta de <strong>OneDrive</strong>. Si cambias de PC, usa el botón "Cargar" y busca ese archivo.</small>
+            </div>
+
+            <button class="btn-cloud btn-excel" style="width:100%;" onclick="exportarExcel()">📥 Descargar REPORTE (Excel/XLS)</button>
             
             <div class="db-table-container">
                 <table class="db-table" id="tabla-ventas">
@@ -710,13 +730,45 @@
             }
         }
 
-        // --- EXPORTACIÓN MEJORADA (XLS HTML CON FORMATO VERTICAL) ---
+        // --- SISTEMA DE RESPALDO (JSON) ---
+        function descargarRespaldo() {
+            var data = localStorage.getItem('chiwowow_ventas');
+            if(!data) { alert("No hay datos para respaldar."); return; }
+
+            var blob = new Blob([data], {type: "application/json"});
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "RESPALDO_CHIWOWOW_" + new Date().toISOString().slice(0,10) + ".json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function cargarRespaldo(input) {
+            var file = input.files[0];
+            if(!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var json = JSON.parse(e.target.result);
+                    if(confirm("⚠️ ATENCIÓN: Al cargar este respaldo, se reemplazarán los datos actuales. ¿Deseas continuar?")) {
+                        localStorage.setItem('chiwowow_ventas', JSON.stringify(json));
+                        alert("✅ Respaldo cargado exitosamente. La página se recargará.");
+                        location.reload();
+                    }
+                } catch(err) {
+                    alert("❌ Error: El archivo no es válido.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- EXPORTACIÓN EXCEL (XLS NATIVO) ---
         function exportarExcel() {
             var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
             if(registros.length === 0) { alert("No hay datos para exportar"); return; }
-            
-            // Construimos una tabla HTML que Excel interpretará como hoja de cálculo
-            // El META CHARSET UTF-8 es clave para que salgan bien los acentos
             
             var tableContent = `
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
@@ -726,7 +778,7 @@
                         table { border-collapse: collapse; width: 100%; }
                         th { background-color: #1B2631; color: white; border: 1px solid #000; padding: 10px; }
                         td { border: 1px solid #ccc; padding: 10px; vertical-align: top; white-space: pre-wrap; }
-                        .text-cell { mso-number-format:"\@"; } /* Fuerza formato texto para teléfonos */
+                        .text-cell { mso-number-format:"\@"; }
                     </style>
                 </head>
                 <body>
@@ -752,8 +804,7 @@
             `;
 
             registros.forEach(function(row) {
-                // Truco para lista vertical: Reemplazamos comas y enters por <br>
-                // Excel interpreta <br> como salto de línea dentro de la celda
+                // Truco para saltos de línea en Excel
                 var listaVertical = row.acompanantes ? row.acompanantes.replace(/,/g, "<br>").replace(/\n/g, "<br>") : "Sin grupo";
                 
                 tableContent += `
@@ -777,7 +828,6 @@
 
             tableContent += "</tbody></table></body></html>";
 
-            // Generamos el archivo .xls (Excel reconoce HTML si tiene esta extensión)
             var blob = new Blob([tableContent], { type: 'application/vnd.ms-excel' });
             var url = URL.createObjectURL(blob);
             var link = document.createElement("a");
