@@ -3,55 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Chi-Wow-Wow PRO (Venta + CRM + Abonos)</title>
+    <title>Sistema Chi-Wow-Wow PRO (Versión Final Verificada)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap');
 
-        /* --- ESTILOS NUCLEO --- */
+        /* --- ESTILOS GENERALES --- */
         :root { 
             --brand-dark: #1B2631; 
             --brand-gold: #D4AF37; 
+            --text-main: #2C3E50; 
+            --bg-light: #F4F6F6; 
             --success: #27ae60; 
             --danger: #c0392b; 
-            --crm: #8e44ad;
+            --warning: #f39c12; 
+            --cloud: #3498db; 
+            --crm: #8e44ad; 
         }
-        body { font-family: 'Open Sans', sans-serif; background-color: #525659; margin: 0; padding: 20px; color: #2C3E50; }
+        body { font-family: 'Open Sans', sans-serif; background-color: #525659; margin: 0; padding: 20px; color: var(--text-main); }
 
         /* --- LOGIN --- */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #1B2631; z-index: 10000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
-        .login-box { background: white; padding: 40px; border-radius: 12px; text-align: center; width: 90%; max-width: 320px; }
-        .login-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 6px; text-align: center; }
+        .login-box { background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 90%; max-width: 320px; }
+        .login-logo { max-width: 140px; margin-bottom: 20px; }
+        .login-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 6px; text-align: center; font-size: 16px; box-sizing: border-box; }
+        .login-btn { background-color: #D4AF37; color: white; border: none; padding: 12px; width: 100%; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        .error-msg { color: #e74c3c; font-weight: bold; font-size: 13px; margin-top: 15px; display: none; }
 
-        /* --- NAVEGACION --- */
+        /* --- SISTEMA PRINCIPAL --- */
         .main-container { max-width: 1200px; margin: 0 auto; display: none; }
+
+        /* --- NAVEGACIÓN --- */
         .nav-bar { display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end; flex-wrap: wrap; }
-        .nav-btn { background: #34495e; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
-        .nav-btn.active { background: var(--brand-gold); color: #1B2631; }
+        .nav-btn { background: #34495e; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
+        .nav-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .nav-btn.active { background: #D4AF37; color: #1B2631; }
         .nav-btn.crm { background: var(--crm); }
 
         /* --- PANELES --- */
-        .control-panel { background: white; padding: 25px; border-radius: 12px; margin-bottom: 30px; border-top: 6px solid var(--brand-dark); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .panel-title { font-family: 'Montserrat'; font-weight: 700; text-align: center; margin-bottom: 20px; }
-        .alert-edit { background: #fcf3cf; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-weight: bold; display: none; }
+        .control-panel { background: white; padding: 25px; border-radius: 12px; margin-bottom: 40px; border-top: 6px solid var(--brand-dark); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .panel-title { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--brand-dark); text-align: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        .alert-edit-mode { background-color: #fcf3cf; color: #7d6608; border: 1px solid #f1c40f; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-weight: 800; display: none; font-size: 1.1rem; }
 
-        /* --- FORMULARIOS --- */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 0.75rem; font-weight: 700; color: #777; margin-bottom: 5px; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn-action { background: var(--brand-dark); color: white; border: none; padding: 15px; width: 100%; font-weight: 700; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+        /* --- FORMULARIO --- */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; text-transform: uppercase; color: #777; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        
+        /* Input de Pasajeros Destacado */
+        #in_pax { font-size: 1.2rem; font-weight: bold; color: var(--brand-dark); border: 2px solid #bdc3c7; }
+        
+        .btn-action { background-color: var(--brand-dark); color: white; border: none; padding: 15px; width: 100%; font-weight: 700; border-radius: 6px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        .btn-action.update-mode { background-color: var(--brand-gold); color: #1B2631; }
+        .btn-cancel { background-color: #95a5a6; color: white; border: none; padding: 10px; width: 100%; font-weight: 600; border-radius: 6px; cursor: pointer; margin-top: 10px; display: none; }
 
-        /* --- TABLAS Y STATS --- */
+        /* --- FILTROS DASHBOARD --- */
+        .filter-bar { display: flex; gap: 15px; background: #e8ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; align-items: flex-end; }
+        .filter-group { flex: 1; }
+        .filter-group label { font-size: 0.75rem; font-weight: 700; color: #555; display: block; margin-bottom: 5px; }
+        .filter-select { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #bdc3c7; }
+
+        /* --- STATS --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; text-align: center; border-left: 5px solid var(--brand-gold); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 24px; font-weight: 800; color: var(--brand-dark); display: block; }
+        .stat-label { font-size: 12px; color: #777; text-transform: uppercase; font-weight: 600; }
+
+        /* --- TABLAS --- */
         .db-table-container { overflow-x: auto; background: white; border-radius: 8px; padding: 15px; }
         .db-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .db-table th { background: var(--brand-dark); color: white; padding: 12px; text-align: left; }
-        .db-table td { padding: 10px; border-bottom: 1px solid #eee; }
-        .abono-tag { font-size: 0.7rem; background: #ebf5fb; color: #2e86c1; padding: 3px 6px; border-radius: 4px; display: block; margin-bottom: 3px; border-left: 3px solid #3498db; }
+        .db-table td { padding: 10px; border-bottom: 1px solid #eee; vertical-align: top;}
+        .db-table tr:hover { background-color: #f9f9f9; }
+        
+        .status-paid { background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
+        .status-pending { background: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
+        
+        /* --- BOTONES TABLA (Destacados) --- */
+        .btn-icon { border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 1rem; margin-right: 5px; color: white; font-weight: bold; }
+        .btn-delete { background: #e74c3c; }
+        .btn-edit { background: #f39c12; border: 1px solid #d35400; } /* Naranja fuerte para editar */
+        .btn-edit:hover { background: #e67e22; }
+        
+        /* --- NUBE Y EXPORT --- */
+        .cloud-controls { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-cloud { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: 700; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.8rem; }
+        .btn-export-db { background: #3498db; }
+        .btn-import-db { background: #8e44ad; }
+        .btn-excel { background: #27ae60; }
 
-        /* --- DOCUMENTOS --- */
-        .document-page { display: none; background: white; width: 21.59cm; margin: 0 auto 40px auto; padding: 1.5cm 2cm; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        /* --- DOCUMENTOS (RECIBO/CONTRATO) --- */
+        .document-page { display: none; background: white; width: 21.59cm; height: 27.94cm; margin: 0 auto 40px auto; padding: 1.5cm 2cm; box-shadow: 0 15px 40px rgba(0,0,0,0.2); box-sizing: border-box; position: relative; overflow: hidden; }
+        header { display: flex; justify-content: space-between; border-bottom: 3px solid var(--brand-dark); padding-bottom: 15px; margin-bottom: 25px; }
+        .logo-img { max-width: 130px; margin-bottom: 5px; }
+        .company-branding h1 { font-family: 'Montserrat', sans-serif; font-size: 18px; color: var(--brand-dark); margin: 0; text-transform: uppercase; font-weight: 700; }
+        .fiscal-details { font-size: 0.7rem; color: #7F8C8D; line-height: 1.4; margin-top: 5px; }
+        .info-columns { display: flex; gap: 20px; background: var(--bg-light); padding: 15px; margin-bottom: 25px; border-radius: 8px; }
+        .info-box { flex: 1; }
+        .concept-table { width: 100%; border-collapse: separate; margin-bottom: 25px; border-spacing: 0; border: 1px solid #eee; border-radius: 8px; }
+        .concept-table th { background: var(--brand-dark); color: white; padding: 10px; text-align: left; font-size: 0.8rem; font-weight: 600; }
+        .concept-table td { padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        
+        /* CONTRATO ORIGINAL (Las 5 Cláusulas) */
+        #contract-document.flex-mode { display: flex !important; flex-direction: column; justify-content: space-between; }
+        .contract-header-flex { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--brand-gold); padding-bottom: 10px; margin-bottom: 15px; }
+        .contract-logo { max-height: 50px; width: auto; margin-bottom: 5px; }
+        .contract-meta-box { display: flex; justify-content: space-between; font-size: 9pt; margin-bottom: 15px; background: var(--bg-light); padding: 8px 12px; border-radius: 4px; border-left: 4px solid var(--brand-dark); }
+        .contract-body { font-size: 9pt; text-align: justify; line-height: 1.3; color: #333; flex-grow: 1; }
+        .contract-clause { margin-bottom: 8px; } 
+        .clause-title { color: var(--brand-dark); font-family: 'Montserrat', sans-serif; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 2px; font-size: 9.5pt; border-bottom: 1px solid #ccc; }
+        .sub-clause { margin-bottom: 2px; padding-left: 0; position: relative; }
+        .sub-clause strong { color: var(--brand-dark); font-weight: 600; }
+        .bottom-section { margin-top: 10px; padding-top: 5px; }
+        .manual-space-indicator { height: 30px; border-bottom: 1px dashed #ddd; margin-bottom: 10px; }
+        .legal-footer { margin-bottom: 10px; font-size: 7.5pt; color: #555; text-align: justify; border-top: 1px solid #eee; padding-top: 5px; }
+        .acceptance-text { text-align: center; margin: 10px 0; font-weight: 700; font-size: 8.5pt; color: var(--brand-dark); text-transform: uppercase; letter-spacing: 0.5px; }
+        .signatures { display: flex; justify-content: space-between; gap: 40px; margin-top: 5px; margin-bottom: 20px; }
+        .sign-box { flex: 1; border-top: 1px solid var(--brand-dark); text-align: center; padding-top: 5px; font-size: 8pt; font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--brand-dark); }
+
+        .controls { text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 20px; padding-bottom: 50px; }
+        .btn-secondary { background: #95a5a6; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-weight: 600; font-family: 'Montserrat'; }
+
+        /* IMPRESIÓN */
         @media print {
-            #login-overlay, .nav-bar, .control-panel, .controls, #dashboard-panel, #client-db-panel { display: none !important; }
-            .document-page { display: block !important; box-shadow: none; margin: 0; }
+            body { background: white; padding: 0; margin: 0; }
+            #login-overlay, .control-panel, .controls, .nav-bar, #dashboard-panel, #client-db-panel { display: none !important; }
+            .main-container { display: block !important; margin: 0; width: 100%; max-width: none; }
+            .document-page { display: block; width: 21.59cm; height: 27.94cm; margin: 0; padding: 1.5cm 2cm; page-break-after: always; box-shadow: none; overflow: hidden; }
+            .document-page:last-child { page-break-after: avoid; }
+            #contract-document { display: flex !important; flex-direction: column; justify-content: space-between; }
+            .manual-space-indicator::after { display: none; }
         }
     </style>
 </head>
@@ -59,79 +140,165 @@
 
     <div id="login-overlay">
         <div class="login-box">
-            <h3 style="font-family:'Montserrat';">ACCESO CHIWOWOW</h3>
+            <img src="chiwowow 2.png" alt="Logo" class="login-logo">
+            <h3 style="margin: 0 0 15px 0; color:#1B2631; font-family:'Montserrat';">ACCESO SEGURO</h3>
             <input type="password" id="pass" class="login-input" placeholder="Contraseña">
-            <button class="btn-action" onclick="entrar()">ENTRAR</button>
+            <button class="login-btn" onclick="entrar()">ENTRAR AL SISTEMA</button>
+            <p id="aviso" class="error-msg">❌ Contraseña incorrecta</p>
         </div>
     </div>
 
     <div class="main-container" id="sistema">
         
         <div class="nav-bar">
-            <button class="nav-btn active" id="btn-nuevo" onclick="limpiarYMostrarNuevo()">📝 Nueva Venta / Abono</button>
-            <button class="nav-btn" id="btn-historial" onclick="mostrarSeccion('historial')">📊 Historial de Ventas</button>
+            <button class="nav-btn active" id="btn-nuevo" onclick="limpiarYMostrarNuevo()">📝 Nuevo Recibo</button>
+            <button class="nav-btn" id="btn-historial" onclick="mostrarSeccion('historial')">📊 Historial y Abonos</button>
             <button class="nav-btn crm" id="btn-clientes" onclick="mostrarSeccion('clientes')">👥 CRM Clientes</button>
         </div>
 
         <div class="control-panel" id="input-form">
-            <h2 class="panel-title">Gestión de Ventas y Abonos</h2>
-            <div id="edit-alert" class="alert-edit">⚠️ MODO EDICIÓN/ABONO ACTIVO</div>
+            <h2 class="panel-title">Gestor de Ventas</h2>
+            
+            <div id="edit-alert" class="alert-edit-mode">
+                ⚠️ MODO EDICIÓN ACTIVO<br>
+                <span style="font-weight:400; font-size:0.9rem;">Aquí puedes corregir la Cantidad de Pasajeros o registrar un nuevo Abono.</span>
+            </div>
+            
             <input type="hidden" id="edit_id">
 
             <div class="form-grid">
-                <div class="form-group"><label>Titular</label><input type="text" id="in_nombre"></div>
-                <div class="form-group"><label>Teléfono</label><input type="text" id="in_tel"></div>
-                <div class="form-group"><label>Email</label><input type="text" id="in_email"></div>
+                <div class="form-group">
+                    <label>Nombre del Cliente (Titular)</label>
+                    <input type="text" id="in_nombre" placeholder="Nombre completo">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" id="in_tel" placeholder="Contacto">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="in_email" placeholder="cliente@email.com">
+                </div>
             </div>
 
             <div class="form-group">
-                <label>Acompañantes (1 por renglón)</label>
-                <textarea id="in_acompanantes" rows="3"></textarea>
+                <label>Nombres de Acompañantes (IMPORTANTE: 1 por renglón)</label>
+                <textarea id="in_acompanantes" rows="4" placeholder="Ej: María Pérez&#10;Juanito Pérez (8 años)&#10;Abuela Coco"></textarea>
+                <small style="color:#777;">* Dale "Enter" después de cada nombre para que la lista salga perfecta en Excel.</small>
             </div>
 
             <div class="form-grid">
-                <div class="form-group"><label>Servicio</label>
-                    <select id="in_servicio">
-                        <option>Expedición Creel y Chepe</option>
-                        <option>Huasteca Potosina</option>
-                        <option>Renta Crafter 2025</option>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Servicio Contratado</label>
+                    <select id="in_servicio" onchange="toggleOtro(this)">
+                        <option value="Expedición Creel y Chepe">Expedición Creel y Chepe</option>
+                        <option value="Viaje a la Huasteca Potosina">Viaje a la Huasteca Potosina</option>
+                        <option value="Tour Barrancas del Cobre">Tour Barrancas del Cobre</option>
+                        <option value="Renta de Van Sprinter">Renta de Van Sprinter</option>
+                        <option value="Traslado Privado">Traslado Privado</option>
+                        <option value="OTRO">OTRO (Escribir...)</option>
                     </select>
+                    <input type="text" id="in_servicio_otro" style="display:none; margin-top:5px; background:#f0f0f0;" placeholder="Escriba el nombre del servicio...">
                 </div>
-                <div class="form-group"><label>Fechas</label><input type="text" id="in_fechas"></div>
-                <div class="form-group"><label>Pasajeros</label><input type="number" id="in_pax" value="1"></div>
+                <div class="form-group">
+                    <label>Fechas del Viaje</label>
+                    <input type="text" id="in_fechas" placeholder="Ej. 12 al 15 Oct">
+                </div>
+                <div class="form-group">
+                    <label style="color:var(--brand-gold);">Cantidad de Pasajeros</label>
+                    <input type="number" id="in_pax" value="1">
+                </div>
             </div>
 
-            <div class="form-grid" style="background:#fef9e7; padding:15px; border-radius:10px; border:1px solid #f1c40f;">
-                <div class="form-group"><label>Costo Total ($)</label><input type="number" id="in_total"></div>
-                <div class="form-group"><label style="color:var(--danger)">Monto a Abonar HOY ($)</label><input type="number" id="in_abono_nuevo" placeholder="0.00"></div>
-                <div class="form-group"><label>Método de Pago</label>
+            <div class="form-group">
+                <label>Notas / Observaciones</label>
+                <textarea id="in_notas" rows="2"></textarea>
+            </div>
+
+            <div class="form-grid" style="border-top: 2px solid #eee; padding-top:20px; margin-top:20px;">
+                <div class="form-group">
+                    <label>Costo Total ($)</label>
+                    <input type="number" id="in_total" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label style="color:#f39c12; font-weight:800;">Abono Acumulado ($)</label>
+                    <input type="number" id="in_abono" placeholder="Suma total pagada hasta hoy" style="border: 2px solid #f39c12; background-color: #fef9e7;">
+                    <small style="color:#777;">* Si te dieron más dinero, suma lo anterior + lo nuevo y pon el TOTAL aquí.</small>
+                </div>
+                <div class="form-group">
+                    <label>Método de Pago (Actual)</label>
                     <select id="in_metodo">
-                        <option>Transferencia</option>
+                        <option>Transferencia Electrónica</option>
+                        <option>Depósito Bancario</option>
+                        <option>Tarjeta de Crédito/Débito</option>
                         <option>Efectivo</option>
-                        <option>Tarjeta</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Fecha Pago</label><input type="date" id="in_fecha_pago"></div>
+                <div class="form-group">
+                    <label style="color:#c0392b;">Fecha de Emisión</label>
+                    <input type="date" id="in_fecha">
+                </div>
             </div>
 
-            <button id="btn-save" class="btn-action" onclick="generarYGuardar()">GUARDAR Y GENERAR DOCUMENTOS</button>
-            <button id="btn-cancel" class="btn-action" style="background:#7f8c8d; display:none;" onclick="limpiarYMostrarNuevo()">CANCELAR EDICIÓN</button>
+            <button id="btn-save" class="btn-action" onclick="generarYGuardar()">GUARDAR Y GENERAR</button>
+            <button id="btn-cancel-edit" class="btn-cancel" onclick="limpiarYMostrarNuevo()">CANCELAR EDICIÓN</button>
         </div>
 
-        <div id="dashboard-panel" style="display:none;">
-            <div style="display:flex; gap:10px; margin-bottom:15px;">
-                <button class="btn-action" style="background:var(--success)" onclick="exportarExcel()">📥 Descargar Excel Ventas</button>
-                <button class="btn-action" style="background:#3498db" onclick="descargarRespaldo()">💾 Backup JSON</button>
+        <div id="dashboard-panel">
+            <h2 class="panel-title">Expediente de Ventas</h2>
+            
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Filtrar por Destino de Viaje:</label>
+                    <select id="filter-destination" class="filter-select" onchange="cargarHistorial()">
+                        <option value="TODOS">Ver Todos los Viajes</option>
+                        </select>
+                </div>
+                <div class="filter-group">
+                    <label>Filtrar por Estado de Pago:</label>
+                    <select id="filter-status" class="filter-select" onchange="cargarHistorial()">
+                        <option value="TODOS">Todos</option>
+                        <option value="PENDIENTE">Sólo Pendientes</option>
+                        <option value="LIQUIDADO">Sólo Liquidados</option>
+                    </select>
+                </div>
             </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="stat-total-ventas">$0</span>
+                    <span class="stat-label">Venta Total (Filtrada)</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="stat-por-cobrar" style="color:#c0392b;">$0</span>
+                    <span class="stat-label">Saldo Pendiente (Filtrado)</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="stat-pasajeros">0</span>
+                    <span class="stat-label">Pasajeros (Filtrados)</span>
+                </div>
+            </div>
+
+            <div class="control-panel" style="background:#f4f6f6; padding:15px; margin-bottom:20px;">
+                <h4 style="margin-top:0; color:#555;">💾 RESPALDO EN LA NUBE (OneDrive)</h4>
+                <div class="cloud-controls">
+                    <button class="btn-cloud btn-export-db" onclick="descargarRespaldo()">⬇️ GUARDAR RESPALDO (Descargar Archivo)</button>
+                    <button class="btn-cloud btn-import-db" onclick="document.getElementById('input-restore').click()">⬆️ CARGAR RESPALDO (Restaurar)</button>
+                    <input type="file" id="input-restore" style="display:none" accept=".json" onchange="cargarRespaldo(this)">
+                </div>
+            </div>
+
+            <button class="btn-cloud btn-excel" style="width:100%;" onclick="exportarExcel()">📥 Descargar REPORTE FILTRADO (Excel)</button>
+            
             <div class="db-table-container">
                 <table class="db-table" id="tabla-ventas">
                     <thead>
                         <tr>
-                            <th>Folio</th>
-                            <th>Cliente / Servicio</th>
+                            <th>Recibo</th>
+                            <th>Expediente (Cliente + Grupo)</th>
                             <th>Total</th>
-                            <th>Historial Abonos (Fecha - Monto - Tipo)</th>
-                            <th>Saldo</th>
+                            <th>Pagado</th>
+                            <th>Resta</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -142,8 +309,11 @@
         </div>
 
         <div id="client-db-panel" style="display:none;">
-            <h2 class="panel-title">👥 Base de Datos CRM</h2>
-            <button class="btn-action" style="background:var(--crm); margin-bottom:15px;" onclick="exportarClientesExcel()">📥 Exportar Lista Marketing</button>
+            <h2 class="panel-title">👥 Base de Datos de Clientes</h2>
+            <p style="text-align:center; color:#777; margin-bottom:20px;">Lista única de titulares para campañas de marketing y re-venta.</p>
+            
+            <button class="btn-cloud btn-excel" style="width:100%; margin-bottom:20px; background:var(--crm);" onclick="exportarClientesExcel()">📥 Descargar Lista de Marketing (Excel)</button>
+
             <div class="db-table-container">
                 <table class="db-table" id="tabla-clientes">
                     <thead>
@@ -160,225 +330,499 @@
         </div>
 
         <div id="receipt-document" class="document-page">
-            <div style="display:flex; justify-content:space-between; border-bottom:3px solid var(--brand-dark); padding-bottom:15px;">
+            <header>
+                <div class="company-branding">
+                    <img src="chiwowow 2.png" alt="Logo" class="logo-img">
+                    <h1>CHIWOW-WOW A & T</h1>
+                    <div class="fiscal-details">
+                        <strong>RAZÓN SOCIAL:</strong> CHIWOW-WOW A & T, S.A. DE C.V.<br>
+                        <strong>RFC:</strong> CAT2205094P0<br>
+                        Av. Heroico Colegio Militar #7716, Chihuahua, Chih.<br>
+                    </div>
+                </div>
+                <div class="receipt-meta">
+                    <div style="font-family:'Montserrat'; font-weight:700; font-size:24px; color:#1B2631; text-align:right;">RECIBO OFICIAL</div>
+                    <div style="color:#D4AF37; font-weight:700; font-size:1.2rem; margin-top:5px; text-align:right;" id="out_folio">#00000</div>
+                    <div style="font-size:0.9rem; margin-top:5px; text-align:right; color:#7F8C8D;">Fecha: <span id="out_fecha_emision"></span></div>
+                </div>
+            </header>
+            <div class="info-columns">
+                <div class="info-box">
+                    <div style="font-family:'Montserrat'; font-size:0.8rem; text-transform:uppercase; color:#1B2631; font-weight:700; border-bottom:2px solid #D4AF37; margin-bottom:8px;">Datos del Cliente</div>
+                    <p><strong id="out_cliente" style="font-size: 1.1rem;"></strong></p>
+                    <p>Tel: <span id="out_tel"></span></p>
+                    <p>Email: <span id="out_email"></span></p>
+                    <p style="font-size:0.8rem; margin-top:5px; color:#555;"><strong>Acompañantes:</strong> <span id="out_acompanantes"></span></p>
+                </div>
+                <div class="info-box" style="border-left: 2px solid #eee; padding-left: 30px;">
+                    <div style="font-family:'Montserrat'; font-size:0.8rem; text-transform:uppercase; color:#1B2631; font-weight:700; border-bottom:2px solid #D4AF37; margin-bottom:8px;">Detalles del Servicio</div>
+                    <p><strong id="out_servicio" style="font-size: 1.1rem;"></strong></p>
+                    <p>Fechas: <span id="out_fechas"></span></p>
+                    <p>Pax: <span id="out_pax"></span> Personas</p>
+                </div>
+            </div>
+            <table class="concept-table">
+                <thead><tr><th style="width:55%;">Descripción</th><th style="width:25%;">Método</th><th style="text-align:right; width:20%;">Importe</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>Costo Total del Servicio Turístico<br><small id="out_notas" style="font-style:italic; color:#7F8C8D;"></small></td>
+                        <td style="text-align: center;">-</td>
+                        <td style="text-align:right; font-weight:600;" id="out_total"></td>
+                    </tr>
+                    <tr>
+                        <td>Abono a Cuenta Recibido</td>
+                        <td id="out_metodo" style="text-align: center;"></td>
+                        <td style="text-align:right; color:#c0392b; font-weight:600;" id="out_abono"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align:right; margin-left: auto; width: 300px;">
+                <div style="font-size: 1.2rem; color: #1B2631; font-weight: 700; border-top: 3px solid #D4AF37; padding-top: 10px; text-align: right;">
+                    Saldo Pendiente: <span id="out_saldo"></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="contract-document" class="document-page">
+            <div class="contract-header-flex">
                 <div>
-                    <h1 style="margin:0; font-family:'Montserrat'; color:var(--brand-dark);">CHIWOW-WOW A & T</h1>
-                    <p style="font-size:0.8rem; color:#777;">RFC: CAT2205094P0 | Chihuahua, Chih.</p>
+                    <img src="chiwowow 2.png" class="contract-logo">
+                    <div style="font-family: 'Montserrat'; font-weight: 700; color: #1B2631; font-size: 12px;">CHIWOW-WOW A & T</div>
                 </div>
                 <div style="text-align:right;">
-                    <h2 style="margin:0;">RECIBO OFICIAL</h2>
-                    <p id="out_folio" style="color:var(--brand-gold); font-weight:800; font-size:1.2rem;"></p>
+                    <div style="color: #1B2631; font-family: 'Montserrat'; font-size: 16px; font-weight: 700;">CONTRATO DE SERVICIOS</div>
+                    <div style="font-family: 'Montserrat'; font-size: 10px; color: #D4AF37; font-weight: 700;">FOLIO: <span id="contrato_folio"></span></div>
                 </div>
             </div>
-            
-            <div class="form-grid" style="margin-top:20px; background:#f4f6f6; padding:15px; border-radius:8px;">
-                <div><strong>CLIENTE:</strong> <span id="out_cliente"></span></div>
-                <div><strong>SERVICIO:</strong> <span id="out_servicio"></span></div>
-                <div><strong>FECHAS:</strong> <span id="out_fechas"></span></div>
+            <div class="contract-meta-box">
+                <div><span style="font-weight: 700; color: #7F8C8D;">TITULAR:</span> <span id="contrato_cliente" style="font-weight: 600; color: #1B2631;"></span></div>
+                <div><span style="font-weight: 700; color: #7F8C8D;">FECHA:</span> <span id="contrato_fecha" style="font-weight: 600; color: #1B2631;"></span></div>
             </div>
-
-            <table style="width:100%; border-collapse:collapse; margin-top:30px;">
-                <thead>
-                    <tr style="background:var(--brand-dark); color:white;">
-                        <th style="padding:10px; text-align:left;">Fecha</th>
-                        <th style="padding:10px; text-align:left;">Descripción del Pago / Método</th>
-                        <th style="padding:10px; text-align:right;">Monto</th>
-                    </tr>
-                </thead>
-                <tbody id="out_lista_abonos"></tbody>
-            </table>
-
-            <div style="margin-left:auto; width:250px; margin-top:20px; border-top:2px solid var(--brand-gold); padding-top:10px;">
-                <div style="display:flex; justify-content:space-between;"><span>TOTAL:</span> <span id="out_total"></span></div>
-                <div style="display:flex; justify-content:space-between; color:green;"><span>PAGADO:</span> <span id="out_pagado"></span></div>
-                <div style="display:flex; justify-content:space-between; font-weight:800; color:red; font-size:1.1rem; margin-top:5px;"><span>SALDO:</span> <span id="out_saldo"></span></div>
+            <div class="contract-body">
+                <p style="margin-bottom: 10px;">Contrato de prestación de servicios turísticos celebrado entre <strong>CHIWOW-WOW A & T, S.A. DE C.V.</strong> ("LA EMPRESA") y "EL CLIENTE", <strong>quien suscribe por sí mismo y en representación de sus acompañantes</strong>. Al realizar cualquier pago, las partes aceptan las siguientes cláusulas:</p>
+                <div class="contract-clause">
+                    <span class="clause-title">1. COMPROMISO Y GARANTÍA</span>
+                    <div class="sub-clause"><strong>Calidad:</strong> Unidades garantizadas en óptimas condiciones mecánicas, de limpieza e higiene, con A/C funcional.</div>
+                    <div class="sub-clause"><strong>Seguridad Legal:</strong> Servicio por operadores con <strong>Licencia Federal vigente</strong>. Unidades con permisos federales, placas y <strong>Póliza de Seguro de Viajero</strong> con cobertura amplia para todos los ocupantes a bordo.</div>
+                    <div class="sub-clause"><strong>Cumplimiento:</strong> Se respetarán itinerarios y horarios pactados, garantizando el servicio contratado (salvo fuerza mayor).</div>
+                </div>
+                <div class="contract-clause">
+                    <span class="clause-title">2. PAGOS Y LIQUIDACIÓN</span>
+                    <div class="sub-clause"><strong>Anticipo:</strong> Todo anticipo, reserva o apartado es <strong>NO REEMBOLSABLE</strong>. Garantiza la disponibilidad y gastos administrativos.</div>
+                    <div class="sub-clause"><strong>Liquidación:</strong> El servicio debe liquidarse al 100% al menos <strong>3 días (72 horas) antes</strong> del viaje. De no ser así, se cancelará sin devolución.</div>
+                </div>
+                <div class="contract-clause">
+                    <span class="clause-title">3. POLÍTICAS DE CANCELACIÓN</span>
+                    <div class="sub-clause"><strong>Por el Cliente:</strong> Si cancela o no se presenta (<strong>"No Show"</strong>), <strong>NO HABRÁ DEVOLUCIONES</strong>. El pago es pena convencional.</div>
+                    <div class="sub-clause"><strong>Fuerza Mayor:</strong> Si el viaje no se realiza por causas ajenas a LA EMPRESA (clima, bloqueos, fallas), la única opción es <strong>CAMBIO DE FECHA</strong>. No hay reembolsos.</div>
+                </div>
+                <div class="contract-clause">
+                    <span class="clause-title">4. REGLAMENTO, CONDUCTA Y RESPONSABILIDAD</span>
+                    <div class="sub-clause"><strong>Prohibiciones:</strong> Estrictamente <strong>PROHIBIDO</strong> consumir alcohol, estupefacientes o fumar (incluyendo "vapes") dentro de la unidad.</div>
+                    <div class="sub-clause"><strong>Responsabilidad:</strong> EL CLIENTE cubre de inmediato cualquier daño o suciedad excesiva causada por él o sus acompañantes.</div>
+                    <div class="sub-clause"><strong>Autoridad:</strong> El operador puede bajar a cualquier persona con conducta agresiva o peligrosa, sin derecho a reembolso.</div>
+                </div>
+                <div class="contract-clause">
+                    <span class="clause-title">5. LOGÍSTICA Y SEGURIDAD</span>
+                    <div class="sub-clause"><strong>Tolerancia:</strong> Máximo <strong>10 minutos</strong> de tolerancia a la salida. Transcurrido este tiempo, la unidad partirá sin responsabilidad.</div>
+                    <div class="sub-clause"><strong>Seguro:</strong> Cubre exclusivamente mientras EL CLIENTE esté a bordo. No cubre accidentes externos ni objetos olvidados.</div>
+                </div>
             </div>
-
-            <div class="controls" style="margin-top:40px; text-align:center;">
-                <button class="btn-action" style="width:auto; padding:10px 40px;" onclick="window.print()">🖨️ IMPRIMIR</button>
-                <button class="btn-action" style="width:auto; padding:10px 40px; background:#7f8c8d;" onclick="mostrarSeccion('nuevo')">VOLVER</button>
+            <div class="bottom-section">
+                <div class="manual-space-indicator"></div>
+                <div class="legal-footer"><strong>JURISDICCIÓN:</strong> Para la interpretación y cumplimiento de este contrato, las partes se someten a la jurisdicción de los tribunales de <strong>Chihuahua, Chih.</strong>, renunciando a cualquier otro fuero por razón de sus domicilios.</div>
+                <div class="acceptance-text">LEÍDO LO ANTERIOR, ACEPTO INCONDICIONALMENTE LOS TÉRMINOS.</div>
+                <div class="signatures">
+                    <div class="sign-box"><br><br><br>FIRMA REPRESENTANTE<br>CHIWOW-WOW A & T</div>
+                    <div class="sign-box"><br><br><br>FIRMA CLIENTE TITULAR<br><span id="firma_nombre_cliente" class="sign-client-name"></span></div>
+                </div>
             </div>
+        </div>
+
+        <div class="controls" id="btn-container">
+            <button class="btn-action" style="width:auto; padding:15px 30px;" onclick="window.print()">🖨️ IMPRIMIR / PDF</button>
+            <button class="btn-secondary" onclick="editar()">✏️ CORREGIR VISTA PREVIA</button>
         </div>
     </div>
 
     <script>
-        // --- LOGICA INICIAL ---
-        document.getElementById('in_fecha_pago').valueAsDate = new Date();
-
+        // --- LOGIN ---
         function entrar() {
-            if (document.getElementById('pass').value.toLowerCase() === "grchiwowow") {
-                document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('sistema').style.display = 'block';
+            var pass = document.getElementById('pass').value;
+            if (pass.toLowerCase() === "grchiwowow") {
+                document.getElementById('login-overlay').style.display = 'none'; 
+                document.getElementById('sistema').style.display = 'block';     
+                cargarHistorial(); 
+            } else { document.getElementById('aviso').style.display = 'block'; document.getElementById('pass').value = ''; }
+        }
+        document.getElementById('pass').addEventListener("keypress", function(e) { if (e.key === "Enter") entrar(); });
+        document.getElementById('in_fecha').valueAsDate = new Date();
+
+        function toggleOtro(select) { document.getElementById('in_servicio_otro').style.display = (select.value === 'OTRO') ? 'block' : 'none'; }
+
+        // --- NAVEGACIÓN ---
+        function limpiarYMostrarNuevo() {
+            document.getElementById('in_nombre').value = "";
+            document.getElementById('in_tel').value = "";
+            document.getElementById('in_email').value = "";
+            document.getElementById('in_acompanantes').value = "";
+            document.getElementById('in_fechas').value = "";
+            document.getElementById('in_pax').value = "1";
+            document.getElementById('in_pax').style.border = "1px solid #ccc"; // Quitar resalte
+            document.getElementById('in_notas').value = "";
+            document.getElementById('in_total').value = "";
+            document.getElementById('in_abono').value = "";
+            document.getElementById('in_fecha').valueAsDate = new Date();
+            
+            document.getElementById('edit_id').value = "";
+            document.getElementById('btn-save').innerText = "GUARDAR Y GENERAR";
+            document.getElementById('btn-save').classList.remove("update-mode");
+            document.getElementById('edit-alert').style.display = "none";
+            document.getElementById('btn-cancel-edit').style.display = "none";
+            mostrarSeccion('nuevo');
+        }
+
+        function mostrarSeccion(seccion) {
+            const form = document.getElementById('input-form');
+            const dash = document.getElementById('dashboard-panel');
+            const clients = document.getElementById('client-db-panel');
+            const doc1 = document.getElementById('receipt-document');
+            const doc2 = document.getElementById('contract-document');
+            const btns = document.getElementById('btn-container');
+
+            // Reset
+            [form, dash, clients, doc1, doc2, btns].forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (seccion === 'nuevo') {
+                form.style.display = 'block';
+                document.getElementById('btn-nuevo').classList.add('active');
+            } else if (seccion === 'historial') {
+                dash.style.display = 'block';
+                document.getElementById('btn-historial').classList.add('active');
+                cargarHistorial(); 
+            } else if (seccion === 'clientes') {
+                clients.style.display = 'block';
+                document.getElementById('btn-clientes').classList.add('active');
+                cargarBaseClientes();
+            }
+        }
+
+        // --- GENERAR / EDITAR ---
+        function generarYGuardar() {
+            var editID = document.getElementById('edit_id').value; 
+            var folio = editID ? obtenerFolioPorID(editID) : "CWW-" + Math.floor(10000 + Math.random() * 90000);
+            
+            var fechaRaw = document.getElementById('in_fecha').value; 
+            var partes = fechaRaw ? fechaRaw.split('-') : ["2026","01","01"];
+            var fechaFmt = partes[2] + '/' + partes[1] + '/' + partes[0];
+
+            var servicio = document.getElementById('in_servicio').value;
+            if (servicio === 'OTRO') servicio = document.getElementById('in_servicio_otro').value;
+            
+            var total = parseFloat(document.getElementById('in_total').value) || 0;
+            var abono = parseFloat(document.getElementById('in_abono').value) || 0;
+            
+            var registro = {
+                id: editID ? parseInt(editID) : Date.now(),
+                folio: folio,
+                fechaEmision: fechaFmt,
+                nombre: document.getElementById('in_nombre').value || "Cliente General",
+                tel: document.getElementById('in_tel').value,
+                email: document.getElementById('in_email').value,
+                acompanantes: document.getElementById('in_acompanantes').value,
+                servicio: servicio,
+                fechasViaje: document.getElementById('in_fechas').value,
+                pax: parseInt(document.getElementById('in_pax').value) || 1,
+                notas: document.getElementById('in_notas').value,
+                total: total,
+                pagado: abono,
+                saldo: total - abono,
+                estado: (total - abono) <= 1 ? "LIQUIDADO" : "PENDIENTE"
+            };
+
+            guardarEnBD(registro);
+            llenarDocumentos(registro, document.getElementById('in_metodo').value);
+        }
+
+        function llenarDocumentos(data, metodo) {
+            document.getElementById('out_folio').innerText = data.folio;
+            document.getElementById('out_fecha_emision').innerText = data.fechaEmision;
+            document.getElementById('out_cliente').innerText = data.nombre;
+            document.getElementById('out_tel').innerText = data.tel;
+            document.getElementById('out_email').innerText = data.email;
+            // Acompañantes en recibo (lineal)
+            document.getElementById('out_acompanantes').innerText = data.acompanantes.replace(/\n/g, ", ");
+            
+            document.getElementById('out_servicio').innerText = data.servicio;
+            document.getElementById('out_fechas').innerText = data.fechasViaje;
+            document.getElementById('out_pax').innerText = data.pax;
+            document.getElementById('out_notas').innerText = data.notas ? "Nota: " + data.notas : "";
+
+            var fmt = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
+            document.getElementById('out_total').innerText = fmt.format(data.total);
+            document.getElementById('out_abono').innerText = "- " + fmt.format(data.pagado);
+            document.getElementById('out_metodo').innerText = metodo;
+
+            var divSaldo = document.getElementById('out_saldo');
+            divSaldo.innerHTML = (data.saldo <= 0.1) ? "<span style='color:#27ae60'>$0.00 (LIQUIDADO)</span>" : "<span style='color:#c0392b'>" + fmt.format(data.saldo) + "</span>";
+
+            document.getElementById('contrato_folio').innerText = data.folio;
+            document.getElementById('contrato_cliente').innerText = data.nombre;
+            document.getElementById('contrato_fecha').innerText = data.fechaEmision;
+            document.getElementById('firma_nombre_cliente').innerText = data.nombre;
+
+            // Mostrar Doc
+            document.getElementById('input-form').style.display = 'none';
+            document.getElementById('receipt-document').style.display = 'block';
+            var contrato = document.getElementById('contract-document');
+            contrato.style.display = 'block';
+            contrato.classList.add('flex-mode');
+            document.getElementById('btn-container').style.display = 'flex';
+            window.scrollTo(0, 0);
+        }
+
+        function editar() {
+            document.getElementById('receipt-document').style.display = 'none';
+            document.getElementById('contract-document').style.display = 'none';
+            document.getElementById('btn-container').style.display = 'none';
+            document.getElementById('input-form').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // --- BASE DE DATOS LOCAL ---
+        function guardarEnBD(registro) {
+            var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
+            var index = registros.findIndex(r => r.id == registro.id);
+            if (index !== -1) { registros[index] = registro; alert("✅ Registro Actualizado Correctamente"); } 
+            else { registros.push(registro); alert("✅ Venta Guardada Exitosamente"); }
+            localStorage.setItem('chiwowow_ventas', JSON.stringify(registros));
+        }
+
+        function obtenerFolioPorID(id) {
+            var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
+            var found = registros.find(r => r.id == id);
+            return found ? found.folio : "";
+        }
+
+        function borrarRegistro(id) {
+            if(confirm("¿Estás seguro de borrar este registro? Esta acción no se puede deshacer.")) {
+                var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
+                var nuevos = registros.filter(r => r.id !== id);
+                localStorage.setItem('chiwowow_ventas', JSON.stringify(nuevos));
                 cargarHistorial();
             }
         }
 
-        function mostrarSeccion(s) {
-            const secs = ['input-form', 'dashboard-panel', 'client-db-panel', 'receipt-document'];
-            secs.forEach(id => document.getElementById(id).style.display = 'none');
-            
-            if (s === 'nuevo') document.getElementById('input-form').style.display = 'block';
-            if (s === 'historial') { document.getElementById('dashboard-panel').style.display = 'block'; cargarHistorial(); }
-            if (s === 'clientes') { document.getElementById('client-db-panel').style.display = 'block'; cargarCRM(); }
+        function cargarParaEditar(id) {
+            var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
+            var reg = registros.find(r => r.id == id);
+            if(reg) {
+                document.getElementById('in_nombre').value = reg.nombre;
+                document.getElementById('in_tel').value = reg.tel || "";
+                document.getElementById('in_email').value = reg.email || "";
+                document.getElementById('in_acompanantes').value = reg.acompanantes;
+                document.getElementById('in_fechas').value = reg.fechasViaje;
+                document.getElementById('in_pax').value = reg.pax;
+                document.getElementById('in_pax').style.border = "3px solid #f39c12"; // RESALTE VISUAL
+                document.getElementById('in_notas').value = reg.notas || "";
+                document.getElementById('in_total').value = reg.total;
+                document.getElementById('in_abono').value = reg.pagado; 
+                document.getElementById('edit_id').value = reg.id;
+                document.getElementById('in_servicio').value = reg.servicio; 
+                
+                mostrarSeccion('nuevo'); 
+                document.getElementById('btn-save').innerText = "ACTUALIZAR DATOS";
+                document.getElementById('btn-save').classList.add("update-mode");
+                document.getElementById('edit-alert').style.display = "block";
+                document.getElementById('btn-cancel-edit').style.display = "block";
+                window.scrollTo(0,0);
+            }
         }
 
-        function limpiarYMostrarNuevo() {
-            document.getElementById('edit_id').value = "";
-            document.getElementById('in_nombre').value = "";
-            document.getElementById('in_abono_nuevo').value = "";
-            document.getElementById('edit-alert').style.display = 'none';
-            document.getElementById('btn-cancel').style.display = 'none';
-            document.getElementById('btn-save').innerText = "GUARDAR Y GENERAR DOCUMENTOS";
-            mostrarSeccion('nuevo');
-        }
+        // --- HISTORIAL CON FILTROS ---
+        function cargarHistorial() {
+            var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
+            var tbody = document.querySelector('#tabla-ventas tbody');
+            tbody.innerHTML = ""; 
 
-        // --- CORE: GUARDAR Y ABONAR ---
-        function generarYGuardar() {
-            let id = document.getElementById('edit_id').value;
-            let registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
-            
-            let montoNuevo = parseFloat(document.getElementById('in_abono_nuevo').value) || 0;
-            let fechaPago = document.getElementById('in_fecha_pago').value;
-            let metodo = document.getElementById('in_metodo').value;
-
-            let reg;
-            if (id) {
-                reg = registros.find(r => r.id == id);
-                if (montoNuevo > 0) reg.abonos.push({ monto: montoNuevo, fecha: fechaPago, metodo: metodo });
-                reg.nombre = document.getElementById('in_nombre').value;
-                reg.tel = document.getElementById('in_tel').value;
-                reg.email = document.getElementById('in_email').value;
-                reg.acompanantes = document.getElementById('in_acompanantes').value;
-                reg.total = parseFloat(document.getElementById('in_total').value);
-            } else {
-                reg = {
-                    id: Date.now(),
-                    folio: "CWW-" + Math.floor(10000 + Math.random() * 90000),
-                    nombre: document.getElementById('in_nombre').value,
-                    tel: document.getElementById('in_tel').value,
-                    email: document.getElementById('in_email').value,
-                    acompanantes: document.getElementById('in_acompanantes').value,
-                    servicio: document.getElementById('in_servicio').value,
-                    fechas: document.getElementById('in_fechas').value,
-                    pax: document.getElementById('in_pax').value,
-                    total: parseFloat(document.getElementById('in_total').value) || 0,
-                    abonos: montoNuevo > 0 ? [{ monto: montoNuevo, fecha: fechaPago, metodo: metodo }] : []
-                };
-                registros.push(reg);
+            // 1. Llenar Dropdown Destinos
+            var destSelect = document.getElementById('filter-destination');
+            var selectedDest = destSelect.value;
+            if(destSelect.options.length === 1) {
+                var unicos = [...new Set(registros.map(r => r.servicio))];
+                unicos.forEach(d => {
+                    var opt = document.createElement('option');
+                    opt.value = d; opt.innerText = d;
+                    destSelect.appendChild(opt);
+                });
             }
 
-            localStorage.setItem('chiwowow_ventas', JSON.stringify(registros));
-            generarVistaRecibo(reg);
-        }
-
-        function generarVistaRecibo(reg) {
-            document.getElementById('out_folio').innerText = reg.folio;
-            document.getElementById('out_cliente').innerText = reg.nombre;
-            document.getElementById('out_servicio').innerText = reg.servicio;
-            document.getElementById('out_fechas').innerText = reg.fechas;
-            
-            let listaHtml = "";
-            let pagado = 0;
-            let fmt = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
-
-            reg.abonos.forEach(a => {
-                pagado += a.monto;
-                listaHtml += `<tr style="border-bottom:1px solid #eee;"><td style="padding:8px;">${a.fecha}</td><td style="padding:8px;">ABONO A CUENTA (${a.metodo})</td><td style="text-align:right; padding:8px;">${fmt.format(a.monto)}</td></tr>`;
+            // 2. Filtrar
+            var statusFilter = document.getElementById('filter-status').value;
+            var filtrados = registros.filter(r => {
+                var passDest = (selectedDest === 'TODOS') || (r.servicio === selectedDest);
+                var passStatus = (statusFilter === 'TODOS') || (statusFilter === 'PENDIENTE' && r.saldo > 1) || (statusFilter === 'LIQUIDADO' && r.saldo <= 1);
+                return passDest && passStatus;
             });
 
-            document.getElementById('out_lista_abonos').innerHTML = listaHtml;
-            document.getElementById('out_total').innerText = fmt.format(reg.total);
-            document.getElementById('out_pagado').innerText = fmt.format(pagado);
-            document.getElementById('out_saldo').innerText = fmt.format(reg.total - pagado);
+            // 3. Stats & Tabla
+            var totalV = 0, totalP = 0, totalPax = 0;
+            var fmt = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
 
-            mostrarSeccion('none');
-            document.getElementById('receipt-document').style.display = 'block';
-        }
-
-        // --- CARGAR HISTORIAL ---
-        function cargarHistorial() {
-            let registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
-            let tbody = document.querySelector('#tabla-ventas tbody');
-            tbody.innerHTML = "";
-            let fmt = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
-
-            registros.slice().reverse().forEach(reg => {
-                let pagado = reg.abonos.reduce((acc, curr) => acc + curr.monto, 0);
-                let saldo = reg.total - pagado;
-                let abonosHtml = reg.abonos.map(a => `<span class="abono-tag">${a.fecha} | ${fmt.format(a.monto)} | ${a.metodo}</span>`).join("");
-
-                let tr = document.createElement('tr');
+            filtrados.slice().reverse().forEach((reg) => {
+                totalV += reg.total; totalP += reg.saldo; totalPax += reg.pax;
+                var tr = document.createElement('tr');
+                var stClass = reg.estado === 'LIQUIDADO' ? 'status-paid' : 'status-pending';
+                // Convertir saltos de línea a <br> para visualización en tabla HTML
+                var grupoHtml = reg.acompanantes ? reg.acompanantes.replace(/\n/g, "<br>") : "Sin grupo";
+                
                 tr.innerHTML = `
                     <td><strong>${reg.folio}</strong></td>
-                    <td>${reg.nombre}<br><small>${reg.servicio} (${reg.fechas})</small></td>
-                    <td>${fmt.format(reg.total)}</td>
-                    <td>${abonosHtml || 'N/A'}</td>
-                    <td style="color:red; font-weight:bold;">${fmt.format(saldo)}</td>
-                    <td>${saldo <= 1 ? '✅' : '⏳'}</td>
                     <td>
-                        <button onclick="prepararEdicion(${reg.id})">✏️ Abono</button>
-                        <button onclick="borrar(${reg.id})" style="color:red">🗑️</button>
+                        <span style="font-weight:700;">${reg.nombre}</span><br>
+                        <div style="font-size:0.75rem; color:#555; background:#eee; padding:5px; border-radius:4px; margin-top:3px;">
+                            ${grupoHtml}
+                        </div>
+                        <div style="font-size:0.7rem; color:#777; margin-top:2px;">📍 ${reg.servicio} | 📅 ${reg.fechasViaje}</div>
+                    </td>
+                    <td>${fmt.format(reg.total)}</td>
+                    <td>${fmt.format(reg.pagado)}</td>
+                    <td style="color:${reg.saldo > 0 ? '#c0392b' : 'green'}">${fmt.format(reg.saldo)}</td>
+                    <td><span class="${stClass}">${reg.estado}</span></td>
+                    <td>
+                        <button class="btn-icon btn-edit" title="Editar / Abonar" onclick="cargarParaEditar(${reg.id})">✏️</button>
+                        <button class="btn-icon btn-delete" title="Borrar" onclick="borrarRegistro(${reg.id})">🗑️</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+
+            document.getElementById('stat-total-ventas').innerText = fmt.format(totalV);
+            document.getElementById('stat-por-cobrar').innerText = fmt.format(totalP);
+            document.getElementById('stat-pasajeros').innerText = totalPax;
         }
 
-        // --- CRM LOGIC ---
-        function cargarCRM() {
-            let registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
-            let tbody = document.querySelector('#tabla-clientes tbody');
+        // --- BASE DE CLIENTES CRM ---
+        function cargarBaseClientes() {
+            var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
+            var tbody = document.querySelector('#tabla-clientes tbody');
             tbody.innerHTML = "";
-            let clientes = {};
 
+            var clientes = {};
+            registros.forEach(r => {
+                if(!clientes[r.nombre]) {
+                    clientes[r.nombre] = { tel: r.tel, email: r.email, viajes: [] };
+                }
+                clientes[r.nombre].viajes.push(`${r.servicio} (${r.fechaEmision})`);
+            });
+
+            for (var nombre in clientes) {
+                var c = clientes[nombre];
+                var tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${nombre}</strong></td>
+                    <td>${c.tel}</td>
+                    <td>${c.email}</td>
+                    <td><small>${c.viajes.join('<br>')}</small></td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        // --- EXPORTAR EXCEL CLIENTES ---
+        function exportarClientesExcel() {
+            var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
+            var clientes = {};
             registros.forEach(r => {
                 if(!clientes[r.nombre]) clientes[r.nombre] = { tel: r.tel, email: r.email, viajes: [] };
                 clientes[r.nombre].viajes.push(r.servicio);
             });
 
-            for (let nombre in clientes) {
-                let c = clientes[nombre];
-                let tr = document.createElement('tr');
-                tr.innerHTML = `<td>${nombre}</td><td>${c.tel}</td><td>${c.email}</td><td><small>${c.viajes.join(", ")}</small></td>`;
-                tbody.appendChild(tr);
+            var tableContent = `
+                <html xmlns:x="urn:schemas-microsoft-com:office:excel">
+                <head><meta charset="UTF-8"></head><body><table>
+                <thead><tr><th>Nombre Cliente</th><th>Teléfono</th><th>Email</th><th>Historial Viajes</th></tr></thead><tbody>`;
+            
+            for (var nombre in clientes) {
+                var c = clientes[nombre];
+                var trips = [...new Set(c.viajes)].join(", ");
+                tableContent += `<tr><td>${nombre}</td><td style='mso-number-format:"\@";'>${c.tel}</td><td>${c.email}</td><td>${trips}</td></tr>`;
             }
+            tableContent += "</tbody></table></body></html>";
+            generarDescarga(tableContent, "Clientes_Chiwowow.xls");
         }
 
-        function prepararEdicion(id) {
-            let registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
-            let reg = registros.find(r => r.id == id);
-            document.getElementById('edit_id').value = reg.id;
-            document.getElementById('in_nombre').value = reg.nombre;
-            document.getElementById('in_tel').value = reg.tel;
-            document.getElementById('in_total').value = reg.total;
-            document.getElementById('edit-alert').style.display = 'block';
-            document.getElementById('btn-cancel').style.display = 'block';
-            mostrarSeccion('nuevo');
-        }
-
-        // --- EXPORTAR Y BACKUP ---
+        // --- EXPORTAR EXCEL VENTAS (FILTRADO) ---
         function exportarExcel() {
-            let registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
-            let csv = "Folio,Cliente,Servicio,Total,Saldo\n";
-            registros.forEach(r => {
-                let pagado = r.abonos.reduce((a, b) => a + b.monto, 0);
-                csv += `${r.folio},${r.nombre},${r.servicio},${r.total},${r.total - pagado}\n`;
+            var registros = JSON.parse(localStorage.getItem('chiwowow_ventas')) || [];
+            var selectedDest = document.getElementById('filter-destination').value;
+            var statusFilter = document.getElementById('filter-status').value;
+            
+            var filtrados = registros.filter(r => {
+                var passDest = (selectedDest === 'TODOS') || (r.servicio === selectedDest);
+                var passStatus = (statusFilter === 'TODOS') || (statusFilter === 'PENDIENTE' && r.saldo > 1) || (statusFilter === 'LIQUIDADO' && r.saldo <= 1);
+                return passDest && passStatus;
             });
-            let blob = new Blob([csv], { type: 'text/csv' });
-            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Ventas_Chiwowow.csv'; a.click();
+
+            if(filtrados.length === 0) { alert("No hay datos para exportar con este filtro."); return; }
+            
+            var tableContent = `
+                <html xmlns:x="urn:schemas-microsoft-com:office:excel">
+                <head><meta charset="UTF-8"><style>
+                    th { background: #1B2631; color: white; border: 1px solid #000; padding: 10px; }
+                    td { border: 1px solid #ccc; vertical-align: top; }
+                </style></head><body><table>
+                <thead><tr>
+                    <th>Folio</th><th>Fecha</th><th>Titular</th><th>Grupo (Vertical)</th>
+                    <th>Teléfono</th><th>Destino</th><th>Pax</th><th>Total</th><th>Pagado</th><th>Saldo</th>
+                </tr></thead><tbody>`;
+
+            filtrados.forEach(row => {
+                // Truco: Reemplazar saltos de línea \n por <br> para que Excel lo respete en la celda
+                var listaVertical = row.acompanantes ? row.acompanantes.replace(/\n/g, "<br>") : "";
+                tableContent += `<tr>
+                    <td>${row.folio}</td><td>${row.fechaEmision}</td><td><strong>${row.nombre}</strong></td>
+                    <td>${listaVertical}</td><td style='mso-number-format:"\@";'>${row.tel}</td>
+                    <td>${row.servicio}</td><td>${row.pax}</td><td>${row.total}</td><td>${row.pagado}</td><td>${row.saldo}</td>
+                </tr>`;
+            });
+            tableContent += "</tbody></table></body></html>";
+            generarDescarga(tableContent, "Reporte_Ventas_Chiwowow.xls");
         }
 
+        function generarDescarga(content, filename) {
+            var blob = new Blob([content], { type: 'application/vnd.ms-excel' });
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        // --- BACKUP ---
         function descargarRespaldo() {
-            let data = localStorage.getItem('chiwowow_ventas');
-            let blob = new Blob([data], {type: "application/json"});
-            let a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "BACKUP_CHI_WOW.json"; a.click();
+            var data = localStorage.getItem('chiwowow_ventas');
+            if(!data) return alert("Sin datos");
+            var blob = new Blob([data], {type: "application/json"});
+            var a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "RESPALDO_CHIWOWOW_" + new Date().toISOString().slice(0,10) + ".json";
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
 
-        function borrar(id) { if(confirm("¿Eliminar?")) { 
-            let regs = JSON.parse(localStorage.getItem('chiwowow_ventas'));
-            localStorage.setItem('chiwowow_ventas', JSON.stringify(regs.filter(r => r.id != id)));
-            cargarHistorial();
-        }}
+        function cargarRespaldo(input) {
+            var file = input.files[0];
+            if(!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                if(confirm("Se reemplazarán los datos actuales. ¿Seguro?")) {
+                    localStorage.setItem('chiwowow_ventas', e.target.result);
+                    alert("Cargado con éxito"); location.reload();
+                }
+            };
+            reader.readAsText(file);
+        }
     </script>
 </body>
 </html>
+
