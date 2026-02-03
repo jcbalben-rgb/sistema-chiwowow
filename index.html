@@ -107,6 +107,17 @@
         }
         .abono-header { font-family: 'Montserrat'; font-weight: 700; color: #8a7019; margin: 0 0 15px 0; }
 
+        /* Estilo para la lista de edición de abonos en el formulario */
+        .historial-edicion-container {
+            background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
+            padding: 15px; margin-bottom: 20px;
+        }
+        .fila-abono-edit {
+            display: flex; gap: 10px; align-items: center; margin-bottom: 10px;
+            padding-bottom: 10px; border-bottom: 1px dashed #eee;
+        }
+        .fila-abono-edit:last-child { border-bottom: none; margin-bottom: 0; }
+        
         /* --- TABLAS --- */
         .table-responsive { 
             overflow-x: auto; background: white; border-radius: 15px; 
@@ -117,7 +128,7 @@
             background: var(--brand-dark); color: white; padding: 18px; 
             text-align: left; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; 
         }
-        td { padding: 18px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; color: #444; }
+        td { padding: 18px; border-bottom: 1px solid #f0f0f0; vertical-align: top; color: #444; }
         tr:nth-child(even) { background-color: #fafbfc; }
         tr:hover { background-color: #f1f4f8; }
         
@@ -131,6 +142,19 @@
             border-radius: 20px; font-size: 0.75rem; font-weight: 700; 
             display: inline-flex; align-items: center; gap: 5px; margin-top: 5px; 
         }
+
+        /* --- MINI INPUTS EN TABLA --- */
+        .mini-abono-row {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 4px; font-size: 0.85rem; background: #fff;
+            padding: 2px 5px; border-radius: 4px; border: 1px solid #eee;
+        }
+        .input-mini {
+            width: 90px !important; padding: 4px !important; height: auto !important;
+            font-size: 0.85rem !important; text-align: right;
+            border: 1px solid #ddd !important; color: var(--brand-dark); font-weight: bold;
+        }
+        .input-mini:focus { background: #fff9e6 !important; border-color: var(--brand-gold) !important; }
 
         /* --- BOTONES Y HERRAMIENTAS --- */
         .btn-main { 
@@ -239,8 +263,16 @@
                 <textarea id="in_notas" rows="3" placeholder="Información importante para la operación..."></textarea>
             </div>
 
+            <div id="container-abonos-form" style="display:none;">
+                <h4 style="color:var(--brand-dark); font-family:'Montserrat'; border-bottom:2px solid #eee; padding-bottom:10px;">
+                    <i class="fas fa-history"></i> HISTORIAL DE PAGOS REGISTRADOS (Editar)
+                </h4>
+                <div id="lista-abonos-editables" class="historial-edicion-container">
+                    </div>
+            </div>
+
             <div class="abono-box">
-                <h4 class="abono-header"><i class="fas fa-money-bill-wave"></i> REGISTRAR ABONO / PAGO</h4>
+                <h4 class="abono-header"><i class="fas fa-plus-circle"></i> REGISTRAR NUEVO ABONO</h4>
                 <div class="form-grid">
                     <div><label>Monto a Abonar ($)</label><input type="number" id="in_abono" placeholder="0.00"></div>
                     <div><label>Método de Pago</label>
@@ -250,7 +282,7 @@
                 </div>
             </div>
 
-            <button class="btn-main" onclick="guardar()"><i class="fas fa-save"></i> GUARDAR Y GENERAR DOCUMENTOS</button>
+            <button class="btn-main" onclick="guardar()"><i class="fas fa-save"></i> GUARDAR CAMBIOS / REGISTRAR</button>
             <button class="btn-main" style="background:#95a5a6; margin-top:15px;" onclick="limpiarForm()"><i class="fas fa-eraser"></i> CANCELAR / NUEVO</button>
         </div>
 
@@ -268,7 +300,15 @@
             
             <div class="table-responsive">
                 <table id="tabla-historial">
-                    <thead><tr><th>Folio</th><th>Cliente / Notas</th><th>Servicio</th><th>Saldo</th><th>Acciones</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th style="width:10%">Folio</th>
+                            <th style="width:25%">Cliente / Notas</th>
+                            <th style="width:20%">Servicio</th>
+                            <th style="width:30%">Finanzas (Editar Abonos)</th> 
+                            <th style="width:15%">Acciones</th>
+                        </tr>
+                    </thead>
                     <tbody id="tbody-historial"></tbody>
                 </table>
             </div>
@@ -295,14 +335,12 @@
                     <p id="out_folio" style="color:var(--brand-gold); font-weight:800; font-size:1.5rem; margin:0;"></p>
                 </div>
             </div>
-            
             <div style="font-size:9pt; margin-bottom:25px; border-left:5px solid var(--brand-dark); padding-left:15px; color:#444; line-height: 1.6;">
                 <strong>EMISOR:</strong> CHIWOW-WOW A & T, S.A. DE C.V.<br>
                 <strong>RFC:</strong> CAT2205094P0<br>
                 <strong>DOMICILIO:</strong> AV. HEROICO COLEGIO MILITAR 7716, COL. NOMBRE DE DIOS, C.P. 31150, CHIHUAHUA, CHIH.<br>
                 <strong>TELÉFONO:</strong> 614 286 0572
             </div>
-
             <div style="background:#F8F9F9; padding:20px; border-radius:12px; font-size:10pt; margin-bottom:25px; border: 1px solid #eee;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
                     <div><strong>CLIENTE:</strong> <span id="out_cliente"></span></div>
@@ -311,20 +349,17 @@
                     <div><strong>FECHAS:</strong> <span id="out_fechas"></span></div>
                 </div>
             </div>
-
             <table style="width:100%; border-collapse:collapse; font-size:10pt;">
                 <thead style="background:var(--brand-dark); color:white;">
                     <tr><th style="padding:12px;">FECHA</th><th style="padding:12px;">MÉTODO DE PAGO</th><th style="padding:12px; text-align:right;">MONTO</th></tr>
                 </thead>
                 <tbody id="out_abonos"></tbody>
             </table>
-
             <div style="text-align:right; margin-top:30px; border-top:3px solid var(--brand-gold); padding-top:15px;">
                 <p style="margin:5px 0; font-size: 11pt;">COSTO TOTAL: <span id="out_total"></span></p>
                 <p style="margin:5px 0; font-size: 11pt;">TOTAL ABONADO: <span id="out_pagado"></span></p>
                 <h2 style="color:var(--danger); margin:10px 0; font-size:1.8rem;">SALDO PENDIENTE: <span id="out_saldo"></span></h2>
             </div>
-
             <div style="margin-top:50px; border-top:1px solid #eee; padding-top:15px; text-align:center; font-size:9pt; color:#666;">
                 <i class="fab fa-facebook"></i> Chi-Wow-Wow Adventure & Travel &nbsp;&nbsp;|&nbsp;&nbsp; 
                 <i class="fab fa-tiktok"></i> Chi-Wow-Wow A&T &nbsp;&nbsp;|&nbsp;&nbsp; 
@@ -339,26 +374,19 @@
             </div>
             <div class="contract-text">
                 <p>Contrato de prestación de servicios turísticos que celebran por una parte <strong>CHIWOW-WOW A & T, S.A. DE C.V.</strong> (LA EMPRESA) y por la otra el C. <strong id="out_cliente_con"></strong> (EL CLIENTE).</p>
-
                 <span class="clause-title">1. RESERVACIONES, ANTICIPOS Y LIQUIDACIÓN</span>
                 <p>EL CLIENTE acepta que todo anticipo o pago realizado es <strong>ESTRICTAMENTE NO REEMBOLSABLE</strong>. El saldo total del viaje deberá estar liquidado al 100% al menos 72 horas antes de la salida programada.</p>
-
                 <span class="clause-title">2. RESPONSABILIDAD DE TERCEROS (DESLINDE)</span>
                 <p>LA EMPRESA actúa como intermediario logístico. No se hace responsable por accidentes, lesiones, enfermedades, robos o deficiencias en el servicio ocurridos dentro de instalaciones de terceros tales como: hoteles, restaurantes, parques de aventura, teleféricos, aerolíneas o transporte ajeno.</p>
-
                 <span class="clause-title">3. FUERZA MAYOR Y CONTINGENCIAS</span>
                 <p>No somos responsables por retrasos, cancelaciones o cambios de itinerario derivados de: clima adverso, bloqueos carreteros, fallas en el Tren Chepe, huelgas o pandemias. En estos casos, se emitirá un certificado de viaje para reprogramación según disponibilidad; <strong>no se realizarán reembolsos en efectivo</strong>.</p>
-
                 <span class="clause-title">4. EQUIPAJE Y OBJETOS PERSONALES</span>
                 <p>EL CLIENTE es el único responsable de su equipaje y artículos de valor. LA EMPRESA no responde por pérdidas, robos o daños de maletas o dispositivos electrónicos durante el trayecto o estancias.</p>
-
                 <span class="clause-title">5. CONDUCTA Y DERECHO DE ADMISIÓN</span>
                 <p>Queda prohibido el consumo de sustancias ilegales o alcohol excesivo en la unidad. EL CLIENTE que ponga en riesgo la seguridad o armonía del grupo será retirado del tour sin derecho a reembolso ni transporte de regreso.</p>
-
                 <span class="clause-title">6. AVISO DE PRIVACIDAD Y USO DE IMAGEN</span>
                 <p>EL CLIENTE autoriza el uso de fotos o videos capturados durante el viaje para fines promocionales de LA EMPRESA en redes sociales y publicidad oficial.</p>
             </div>
-
             <div style="display:flex; justify-content:space-between; margin-top:80px; text-align:center;">
                 <div style="width:40%; border-top:2px solid var(--brand-dark); padding-top:15px;">
                     <strong>CHIWOW-WOW A & T, S.A. DE C.V.</strong><br><small>PRESTADOR DEL SERVICIO</small>
@@ -367,7 +395,6 @@
                     <span id="out_firma"></span><br><small>FIRMA DE CONFORMIDAD DEL CLIENTE</small>
                 </div>
             </div>
-            
             <div class="no-print" style="text-align:center; margin-top:50px;">
                 <button class="btn-main" style="width:350px; background:var(--brand-dark);" onclick="window.print()">🖨️ IMPRIMIR EXPEDIENTE COMPLETO</button>
             </div>
@@ -376,17 +403,14 @@
     </div>
 
     <script>
-        // --- GESTIÓN DE DATOS Y MIGRACIÓN ---
+        // --- GESTIÓN DE DATOS ---
         let db = [];
-        // Lista de claves antiguas para buscar datos perdidos y unificarlos
         const clavesHistoricas = ['chiwowow_final_v7', 'chiwowow_final_v6', 'chiwowow_final_db', 'chiwowow_ventas', 'chiwowow_master_db', 'cww_data'];
 
         function inicializarBaseDatos() {
             let datosRecuperados = [];
             let idsProcesados = new Set();
-            let datosEncontrados = false;
 
-            // Barrido de todas las posibles ubicaciones de datos
             clavesHistoricas.forEach(clave => {
                 let data = localStorage.getItem(clave);
                 if(data) {
@@ -397,7 +421,6 @@
                                 if(!idsProcesados.has(registro.id)) {
                                     datosRecuperados.push(registro);
                                     idsProcesados.add(registro.id);
-                                    datosEncontrados = true;
                                 }
                             });
                         }
@@ -407,16 +430,14 @@
 
             if(datosRecuperados.length > 0) {
                 db = datosRecuperados;
-                guardarCambios(); // Unificar todo en la versión actual
+                guardarCambios(); 
             }
         }
 
         function guardarCambios() {
-            // Guardamos en la clave definitiva
             localStorage.setItem('chiwowow_master_final', JSON.stringify(db));
         }
 
-        // Cargar al inicio
         const datosActuales = localStorage.getItem('chiwowow_master_final');
         if(datosActuales) {
             db = JSON.parse(datosActuales);
@@ -450,7 +471,6 @@
             let id = document.getElementById('edit_id').value || Date.now().toString();
             let monto = parseFloat(document.getElementById('in_abono').value) || 0;
             
-            // Determinar servicio final
             let sel = document.getElementById('in_servicio');
             let servicioFinal = sel.value === 'OTRO' ? document.getElementById('in_servicio_manual').value : sel.value;
 
@@ -458,7 +478,7 @@
 
             let nuevoRegistro = {
                 id: id,
-                folio: "", // Se mantiene si existe, se crea si es nuevo
+                folio: "", 
                 nombre: document.getElementById('in_nombre').value,
                 tel: document.getElementById('in_tel').value,
                 social: document.getElementById('in_social').value,
@@ -466,17 +486,17 @@
                 fechas: document.getElementById('in_fechas').value,
                 total: parseFloat(document.getElementById('in_total').value) || 0,
                 notas: document.getElementById('in_notas').value,
-                abonos: [] // Se llena abajo
+                abonos: [] 
             };
 
             let indice = db.findIndex(x => x.id == id);
 
             if(indice > -1) {
-                // EDICIÓN: Conservar folio y abonos previos
                 nuevoRegistro.folio = db[indice].folio;
-                nuevoRegistro.abonos = db[indice].abonos;
+                // Importante: Conservar los abonos existentes, ya sean editados o no
+                nuevoRegistro.abonos = db[indice].abonos || [];
                 
-                // Agregar abono nuevo si existe
+                // Si agregaron uno nuevo desde la caja de "Nuevo Abono"
                 if(monto > 0) {
                     nuevoRegistro.abonos.push({
                         monto: monto, 
@@ -486,7 +506,6 @@
                 }
                 db[indice] = nuevoRegistro;
             } else {
-                // NUEVO REGISTRO
                 nuevoRegistro.folio = "CWW-" + Math.floor(10000 + Math.random() * 90000);
                 if(monto > 0) {
                     nuevoRegistro.abonos.push({
@@ -502,34 +521,35 @@
             prepararDocumentos(id);
         }
 
-        function prepararDocumentos(id) {
-            let r = db.find(x => x.id == id);
-            let fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
-            let pagado = r.abonos.reduce((s,a)=>s+a.monto,0);
+        // --- ACTUALIZACIÓN DIRECTA (TABLA O FORMULARIO) ---
+        function actualizarAbonoDirecto(id, indexAbono, nuevoMonto) {
+            let montoParsed = parseFloat(nuevoMonto);
+            if(isNaN(montoParsed)) return; 
 
-            // Llenar datos visuales
-            document.getElementById('out_folio').innerText = r.folio;
-            document.getElementById('out_cliente').innerText = r.nombre;
-            document.getElementById('out_social_doc').innerText = r.social || 'No registrada';
-            document.getElementById('out_servicio').innerText = r.servicio;
-            document.getElementById('out_fechas').innerText = r.fechas;
-            
-            document.getElementById('out_total').innerText = fmt.format(r.total);
-            document.getElementById('out_pagado').innerText = fmt.format(pagado);
-            document.getElementById('out_saldo').innerText = fmt.format(r.total - pagado);
-            
-            // Llenar contrato
-            document.getElementById('out_cliente_con').innerText = r.nombre;
-            document.getElementById('out_firma').innerText = r.nombre;
-
-            // Tabla de abonos en recibo
-            let htmlAbonos = "";
-            r.abonos.forEach(a => {
-                htmlAbonos += `<tr><td>${a.fecha}</td><td>${a.metodo}</td><td style="text-align:right;">${fmt.format(a.monto)}</td></tr>`;
-            });
-            document.getElementById('out_abonos').innerHTML = htmlAbonos;
-
-            mostrarSeccion('impresion');
+            let indice = db.findIndex(x => x.id == id);
+            if(indice > -1) {
+                if(!db[indice].abonos) db[indice].abonos = [];
+                db[indice].abonos[indexAbono].monto = montoParsed;
+                guardarCambios();
+                
+                // Si estamos en el formulario, actualizamos la vista previa también
+                if(document.getElementById('sec-registro').style.display === 'block') {
+                   // No hacemos nada visual extra, el input ya cambió.
+                } else {
+                   renderizarTablas(); // Refrescamos la tabla si estamos ahí
+                }
+            }
+        }
+        
+        function eliminarAbono(id, indexAbono) {
+            if(confirm("¿Eliminar este abono del historial?")) {
+                let indice = db.findIndex(x => x.id == id);
+                if(indice > -1) {
+                    db[indice].abonos.splice(indexAbono, 1);
+                    guardarCambios();
+                    editar(id); // Recargar el formulario
+                }
+            }
         }
 
         function renderizarTablas() {
@@ -541,12 +561,34 @@
             tbodyHist.innerHTML = "";
             tbodyCRM.innerHTML = "";
 
-            // Ordenar por más reciente
             db.sort((a,b) => b.id - a.id).forEach(r => {
+                // CORRECCIÓN PARA DATOS VIEJOS: Asegurar que r.abonos existe
+                if(!r.abonos) r.abonos = [];
+
                 let pagado = r.abonos.reduce((s,a)=>s+a.monto,0);
                 let saldo = r.total - pagado;
                 
-                // 1. Tabla Historial
+                // GENERAR LISTA DE ABONOS EDITABLES PARA LA TABLA
+                let listaAbonosHTML = "";
+                if(r.abonos.length > 0) {
+                    listaAbonosHTML = `<div style="margin: 5px 0; border-top:1px solid #eee; padding-top:5px;">`;
+                    r.abonos.forEach((abono, index) => {
+                        listaAbonosHTML += `
+                            <div class="mini-abono-row">
+                                <span style="color:#777; font-size:0.75rem;">${abono.fecha}:</span>
+                                <input type="number" 
+                                       class="input-mini" 
+                                       value="${abono.monto}" 
+                                       onchange="actualizarAbonoDirecto('${r.id}', ${index}, this.value)"
+                                       title="Clic para editar el monto">
+                            </div>
+                        `;
+                    });
+                    listaAbonosHTML += `</div>`;
+                } else {
+                    listaAbonosHTML = `<div style="color:#999; font-style:italic; font-size:0.8rem;">Sin anticipos</div>`;
+                }
+
                 tbodyHist.innerHTML += `
                     <tr>
                         <td><strong>${r.folio}</strong></td>
@@ -555,7 +597,14 @@
                             <span class="note-preview"><i class="fas fa-sticky-note"></i> ${r.notas || 'Sin notas'}</span>
                         </td>
                         <td>${r.servicio}</td>
-                        <td style="color:${saldo > 0 ? 'var(--danger)' : 'var(--success)'}; font-weight:bold;">${fmt.format(saldo)}</td>
+                        <td>
+                            <div style="font-weight:800; color:var(--brand-dark); margin-bottom:5px;">Total: ${fmt.format(r.total)}</div>
+                            ${listaAbonosHTML}
+                            <div style="margin-top:5px; padding-top:5px; border-top:2px solid #ddd; display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:0.8rem; font-weight:bold;">PENDIENTE:</span>
+                                <span style="color:${saldo > 1 ? 'var(--danger)' : 'var(--success)'}; font-weight:800; font-size:1rem;">${fmt.format(saldo)}</span>
+                            </div>
+                        </td>
                         <td>
                             <button class="btn-circle" style="background:var(--whatsapp)" onclick="enviarWA('${r.id}')" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
                             <button class="btn-circle" style="background:var(--brand-gold)" onclick="editar('${r.id}')" title="Editar"><i class="fas fa-edit"></i></button>
@@ -564,7 +613,6 @@
                     </tr>
                 `;
 
-                // 2. Agrupación para CRM
                 if(!clientesMap[r.nombre]) {
                     clientesMap[r.nombre] = { 
                         tel: r.tel, 
@@ -575,7 +623,6 @@
                 clientesMap[r.nombre].viajes.push(r.servicio);
             });
 
-            // 3. Renderizar CRM
             for(let nombre in clientesMap) {
                 let c = clientesMap[nombre];
                 tbodyCRM.innerHTML += `
@@ -596,6 +643,9 @@
 
         function editar(id) {
             let r = db.find(x => x.id == id);
+            // Asegurar compatibilidad
+            if(!r.abonos) r.abonos = [];
+
             document.getElementById('edit_id').value = r.id;
             document.getElementById('in_nombre').value = r.nombre;
             document.getElementById('in_tel').value = r.tel;
@@ -604,7 +654,7 @@
             document.getElementById('in_total').value = r.total;
             document.getElementById('in_notas').value = r.notas || '';
             
-            // Manejo del selector de servicio
+            // Selector de servicio
             let sel = document.getElementById('in_servicio');
             let manual = document.getElementById('in_servicio_manual');
             let opciones = Array.from(sel.options).map(o => o.value);
@@ -618,7 +668,66 @@
                 manual.value = r.servicio;
             }
 
+            // --- MOSTRAR ABONOS EN EL FORMULARIO ---
+            let containerAbonos = document.getElementById('container-abonos-form');
+            let listaHTML = document.getElementById('lista-abonos-editables');
+            
+            if(r.abonos.length > 0) {
+                containerAbonos.style.display = 'block';
+                let html = "";
+                r.abonos.forEach((abono, idx) => {
+                    html += `
+                        <div class="fila-abono-edit">
+                            <div style="flex:1; font-size:0.85rem;">
+                                <strong>${abono.fecha}</strong><br>
+                                <span style="color:#666;">${abono.metodo}</span>
+                            </div>
+                            <div style="flex:1;">
+                                <input type="number" value="${abono.monto}" 
+                                    onchange="actualizarAbonoDirecto('${r.id}', ${idx}, this.value)"
+                                    style="padding:8px; border:1px solid var(--brand-gold);">
+                            </div>
+                            <div>
+                                <button class="btn-tool bg-del" style="margin:0; padding:5px 10px;" onclick="eliminarAbono('${r.id}', ${idx})"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                listaHTML.innerHTML = html;
+            } else {
+                containerAbonos.style.display = 'none';
+            }
+
             mostrarSeccion('nuevo');
+        }
+
+        function prepararDocumentos(id) {
+            let r = db.find(x => x.id == id);
+            if(!r.abonos) r.abonos = []; // Safety check
+
+            let fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
+            let pagado = r.abonos.reduce((s,a)=>s+a.monto,0);
+
+            document.getElementById('out_folio').innerText = r.folio;
+            document.getElementById('out_cliente').innerText = r.nombre;
+            document.getElementById('out_social_doc').innerText = r.social || 'No registrada';
+            document.getElementById('out_servicio').innerText = r.servicio;
+            document.getElementById('out_fechas').innerText = r.fechas;
+            
+            document.getElementById('out_total').innerText = fmt.format(r.total);
+            document.getElementById('out_pagado').innerText = fmt.format(pagado);
+            document.getElementById('out_saldo').innerText = fmt.format(r.total - pagado);
+            
+            document.getElementById('out_cliente_con').innerText = r.nombre;
+            document.getElementById('out_firma').innerText = r.nombre;
+
+            let htmlAbonos = "";
+            r.abonos.forEach(a => {
+                htmlAbonos += `<tr><td>${a.fecha}</td><td>${a.metodo}</td><td style="text-align:right;">${fmt.format(a.monto)}</td></tr>`;
+            });
+            document.getElementById('out_abonos').innerHTML = htmlAbonos;
+
+            mostrarSeccion('impresion');
         }
 
         function borrar(id) {
@@ -631,16 +740,15 @@
 
         function enviarWA(id) {
             let r = db.find(x => x.id == id);
+            if(!r.abonos) r.abonos = [];
             let saldo = r.total - r.abonos.reduce((s,a)=>s+a.monto,0);
             let msg = `Hola *${r.nombre}*, te saludamos de Chi-Wow-Wow A&T. Confirmamos tu expediente *${r.folio}* para *${r.servicio}*. Saldo pendiente: *$${saldo}*.`;
             window.open(`https://wa.me/52${r.tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`);
         }
 
         function mostrarSeccion(sec) {
-            // Ocultar todo
             ['sec-registro', 'sec-historial', 'sec-crm', 'doc-recibo', 'doc-contrato'].forEach(id => document.getElementById(id).style.display = 'none');
             
-            // Quitar clase activa a botones
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
             if(sec === 'nuevo') {
@@ -667,6 +775,7 @@
             document.getElementById('in_notas').value = "";
             document.getElementById('in_servicio').value = "Expedición Creel y Chepe";
             document.getElementById('in_servicio_manual').style.display = "none";
+            document.getElementById('container-abonos-form').style.display = 'none'; // Ocultar historial
             mostrarSeccion('nuevo');
         }
 
@@ -687,7 +796,6 @@
             reader.onload = function(e) {
                 try {
                     let loaded = JSON.parse(e.target.result);
-                    // Fusión inteligente: Solo agrega si el ID no existe
                     let agregados = 0;
                     loaded.forEach(r => {
                         if(!db.find(exist => exist.id == r.id)) {
