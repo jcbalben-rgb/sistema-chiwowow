@@ -107,7 +107,6 @@
         }
         .abono-header { font-family: 'Montserrat'; font-weight: 700; color: #8a7019; margin: 0 0 15px 0; }
 
-        /* Estilo para la lista de edición de abonos en el formulario */
         .historial-edicion-container {
             background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
             padding: 15px; margin-bottom: 20px;
@@ -143,7 +142,6 @@
             display: inline-flex; align-items: center; gap: 5px; margin-top: 5px; 
         }
 
-        /* --- MINI INPUTS EN TABLA --- */
         .mini-abono-row {
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 4px; font-size: 0.85rem; background: #fff;
@@ -265,7 +263,7 @@
 
             <div id="container-abonos-form" style="display:none;">
                 <h4 style="color:var(--brand-dark); font-family:'Montserrat'; border-bottom:2px solid #eee; padding-bottom:10px;">
-                    <i class="fas fa-history"></i> HISTORIAL DE PAGOS REGISTRADOS (Editar)
+                    <i class="fas fa-lock"></i> HISTORIAL DE PAGOS (Requiere Clave para Editar)
                 </h4>
                 <div id="lista-abonos-editables" class="historial-edicion-container">
                     </div>
@@ -305,7 +303,7 @@
                             <th style="width:10%">Folio</th>
                             <th style="width:25%">Cliente / Notas</th>
                             <th style="width:20%">Servicio</th>
-                            <th style="width:30%">Finanzas (Editar Abonos)</th> 
+                            <th style="width:30%">Finanzas (Edición con Clave)</th> 
                             <th style="width:15%">Acciones</th>
                         </tr>
                     </thead>
@@ -403,6 +401,20 @@
     </div>
 
     <script>
+        // *** SEGURIDAD ***
+        // SE ACTUALIZÓ EL PIN A "2510"
+        const CLAVE_MAESTRA = "2510"; 
+
+        function verificarAutorizacion() {
+            let intento = prompt("🔒 SEGURIDAD: Ingrese Clave de Autorización para editar:");
+            if (intento === CLAVE_MAESTRA) {
+                return true;
+            } else {
+                alert("⛔ CLAVE INCORRECTA. Acción denegada.");
+                return false;
+            }
+        }
+
         // --- GESTIÓN DE DATOS ---
         let db = [];
         const clavesHistoricas = ['chiwowow_final_v7', 'chiwowow_final_v6', 'chiwowow_final_db', 'chiwowow_ventas', 'chiwowow_master_db', 'cww_data'];
@@ -410,7 +422,6 @@
         function inicializarBaseDatos() {
             let datosRecuperados = [];
             let idsProcesados = new Set();
-
             clavesHistoricas.forEach(clave => {
                 let data = localStorage.getItem(clave);
                 if(data) {
@@ -427,7 +438,6 @@
                     } catch(e) { console.error("Error leyendo clave:", clave); }
                 }
             });
-
             if(datosRecuperados.length > 0) {
                 db = datosRecuperados;
                 guardarCambios(); 
@@ -493,10 +503,7 @@
 
             if(indice > -1) {
                 nuevoRegistro.folio = db[indice].folio;
-                // Importante: Conservar los abonos existentes, ya sean editados o no
                 nuevoRegistro.abonos = db[indice].abonos || [];
-                
-                // Si agregaron uno nuevo desde la caja de "Nuevo Abono"
                 if(monto > 0) {
                     nuevoRegistro.abonos.push({
                         monto: monto, 
@@ -516,15 +523,24 @@
                 }
                 db.push(nuevoRegistro);
             }
-
             guardarCambios();
             prepararDocumentos(id);
         }
 
-        // --- ACTUALIZACIÓN DIRECTA (TABLA O FORMULARIO) ---
+        // --- FUNCIONES SEGURAS CON CLAVE ---
         function actualizarAbonoDirecto(id, indexAbono, nuevoMonto) {
             let montoParsed = parseFloat(nuevoMonto);
             if(isNaN(montoParsed)) return; 
+
+            // VERIFICACIÓN DE CLAVE
+            if(!verificarAutorizacion()) {
+                // Si falla, recargamos la tabla para que el número vuelva a ser el original visualmente
+                renderizarTablas();
+                if(document.getElementById('sec-registro').style.display === 'block') {
+                    editar(id, true); // Recargar formulario sin pedir clave de nuevo (flag true)
+                }
+                return;
+            }
 
             let indice = db.findIndex(x => x.id == id);
             if(indice > -1) {
@@ -532,22 +548,22 @@
                 db[indice].abonos[indexAbono].monto = montoParsed;
                 guardarCambios();
                 
-                // Si estamos en el formulario, actualizamos la vista previa también
-                if(document.getElementById('sec-registro').style.display === 'block') {
-                   // No hacemos nada visual extra, el input ya cambió.
-                } else {
-                   renderizarTablas(); // Refrescamos la tabla si estamos ahí
+                if(document.getElementById('sec-registro').style.display !== 'block') {
+                   renderizarTablas();
                 }
             }
         }
         
         function eliminarAbono(id, indexAbono) {
-            if(confirm("¿Eliminar este abono del historial?")) {
+            // VERIFICACIÓN DE CLAVE
+            if(!verificarAutorizacion()) return;
+
+            if(confirm("¿Confirmar eliminación definitiva del abono?")) {
                 let indice = db.findIndex(x => x.id == id);
                 if(indice > -1) {
                     db[indice].abonos.splice(indexAbono, 1);
                     guardarCambios();
-                    editar(id); // Recargar el formulario
+                    editar(id, true); // Recargar
                 }
             }
         }
@@ -562,13 +578,10 @@
             tbodyCRM.innerHTML = "";
 
             db.sort((a,b) => b.id - a.id).forEach(r => {
-                // CORRECCIÓN PARA DATOS VIEJOS: Asegurar que r.abonos existe
                 if(!r.abonos) r.abonos = [];
-
                 let pagado = r.abonos.reduce((s,a)=>s+a.monto,0);
                 let saldo = r.total - pagado;
                 
-                // GENERAR LISTA DE ABONOS EDITABLES PARA LA TABLA
                 let listaAbonosHTML = "";
                 if(r.abonos.length > 0) {
                     listaAbonosHTML = `<div style="margin: 5px 0; border-top:1px solid #eee; padding-top:5px;">`;
@@ -614,11 +627,7 @@
                 `;
 
                 if(!clientesMap[r.nombre]) {
-                    clientesMap[r.nombre] = { 
-                        tel: r.tel, 
-                        social: r.social, 
-                        viajes: [] 
-                    };
+                    clientesMap[r.nombre] = { tel: r.tel, social: r.social, viajes: [] };
                 }
                 clientesMap[r.nombre].viajes.push(r.servicio);
             });
@@ -641,9 +650,11 @@
             }
         }
 
-        function editar(id) {
+        function editar(id, skipAuth = false) {
+            // VERIFICACIÓN DE CLAVE AL ABRIR EL EDITOR
+            if(!skipAuth && !verificarAutorizacion()) return;
+
             let r = db.find(x => x.id == id);
-            // Asegurar compatibilidad
             if(!r.abonos) r.abonos = [];
 
             document.getElementById('edit_id').value = r.id;
@@ -654,7 +665,6 @@
             document.getElementById('in_total').value = r.total;
             document.getElementById('in_notas').value = r.notas || '';
             
-            // Selector de servicio
             let sel = document.getElementById('in_servicio');
             let manual = document.getElementById('in_servicio_manual');
             let opciones = Array.from(sel.options).map(o => o.value);
@@ -668,7 +678,6 @@
                 manual.value = r.servicio;
             }
 
-            // --- MOSTRAR ABONOS EN EL FORMULARIO ---
             let containerAbonos = document.getElementById('container-abonos-form');
             let listaHTML = document.getElementById('lista-abonos-editables');
             
@@ -703,7 +712,7 @@
 
         function prepararDocumentos(id) {
             let r = db.find(x => x.id == id);
-            if(!r.abonos) r.abonos = []; // Safety check
+            if(!r.abonos) r.abonos = []; 
 
             let fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
             let pagado = r.abonos.reduce((s,a)=>s+a.monto,0);
@@ -731,6 +740,9 @@
         }
 
         function borrar(id) {
+            // VERIFICACIÓN DE CLAVE
+            if(!verificarAutorizacion()) return;
+
             if(confirm("ATENCIÓN: ¿Seguro que deseas eliminar este expediente permanentemente?")) {
                 db = db.filter(x => x.id != id);
                 guardarCambios();
@@ -775,7 +787,7 @@
             document.getElementById('in_notas').value = "";
             document.getElementById('in_servicio').value = "Expedición Creel y Chepe";
             document.getElementById('in_servicio_manual').style.display = "none";
-            document.getElementById('container-abonos-form').style.display = 'none'; // Ocultar historial
+            document.getElementById('container-abonos-form').style.display = 'none';
             mostrarSeccion('nuevo');
         }
 
