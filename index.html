@@ -210,6 +210,7 @@
         .bg-del { background: var(--danger); }
         .bg-dl { background: var(--success); }
         .bg-ul { background: var(--blue); }
+        .bg-print { background: var(--blue); } 
         
         /* --- DOCUMENTOS PARA IMPRESIÓN --- */
         .doc-page { 
@@ -239,7 +240,7 @@
 
     <div id="login-overlay">
         <div class="login-box">
-            <img src="chiwowow_2.png" alt="Logo" class="login-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/180x80?text=Chi-Wow-Wow'">
+            <img src="chiwowow 2.png" alt="Logo" class="login-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/180x80?text=Chi-Wow-Wow'">
             <h3 style="font-family:'Montserrat'; color:var(--brand-dark);">Sistema Chi-Wow-Wow</h3>
             <input type="password" id="pass" style="text-align:center; margin-bottom:20px;" placeholder="Contraseña de Acceso">
             <button class="btn-main" onclick="entrar()">INGRESAR AL SISTEMA</button>
@@ -338,7 +339,7 @@
             <div class="panel-header">
                 <h2 class="panel-title">Base de Datos de Expedientes</h2>
                 <div>
-                    <button class="btn-tool bg-dl" onclick="descargarRespaldo()"><i class="fas fa-download"></i> Descargar JSON Mestro</button>
+                    <button class="btn-tool bg-dl" onclick="descargarRespaldo()"><i class="fas fa-download"></i> Descargar JSON Maestro</button>
                     <button class="btn-tool bg-ul" onclick="document.getElementById('file-input').click()"><i class="fas fa-upload"></i> Cargar JSON</button>
                     <input type="file" id="file-input" style="display:none" onchange="cargarJSON(this)">
                 </div>
@@ -377,7 +378,7 @@
 
         <div id="doc-recibo" class="doc-page">
             <div class="doc-header">
-                <img src="chiwowow_2.png" style="height:80px;" onerror="this.onerror=null; this.style.display='none'">
+                <img src="chiwowow 2.png" style="height:80px;" onerror="this.onerror=null; this.style.display='none'">
                 <div style="text-align:right;">
                     <h1 style="margin:0; font-family:'Montserrat'; font-size:20pt; color:var(--brand-dark);">RECIBO DE PAGO</h1>
                     <p id="out_folio" style="color:var(--brand-gold); font-weight:800; font-size:1.5rem; margin:0;"></p>
@@ -421,7 +422,7 @@
 
         <div id="doc-contrato" class="doc-page">
             <div class="doc-header" style="border-bottom:3px solid var(--brand-gold);">
-                <img src="chiwowow_2.png" style="height:60px;" onerror="this.onerror=null; this.style.display='none'">
+                <img src="chiwowow 2.png" style="height:60px;" onerror="this.onerror=null; this.style.display='none'">
                 <h2 style="margin:0; font-family:'Montserrat'; font-size:16pt;">CONTRATO DE ADHESIÓN Y SERVICIOS</h2>
             </div>
             <div class="contract-text">
@@ -743,6 +744,7 @@
                         </td>
                         <td>
                             <button class="btn-circle" style="background:var(--whatsapp)" onclick="enviarWA('${r.id}')" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                            <button class="btn-circle bg-print" onclick="prepararDocumentos('${r.id}')" title="Imprimir"><i class="fas fa-print"></i></button>
                             <button class="btn-circle" style="background:var(--brand-gold)" onclick="editar('${r.id}')" title="Editar"><i class="fas fa-edit"></i></button>
                             <button class="btn-circle" style="background:var(--danger)" onclick="borrar('${r.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                         </td>
@@ -928,7 +930,15 @@
             let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
             let link = document.createElement('a');
             link.setAttribute("href", dataStr);
-            link.setAttribute("download", "RESPALDO_CHIWOWOW_MAESTRO_" + new Date().toISOString().slice(0,10) + ".json");
+            
+            let fecha = new Date();
+            let timestamp = fecha.getFullYear() + "-" + 
+                            (fecha.getMonth()+1).toString().padStart(2,'0') + "-" + 
+                            fecha.getDate().toString().padStart(2,'0') + "_" + 
+                            fecha.getHours().toString().padStart(2,'0') + "-" + 
+                            fecha.getMinutes().toString().padStart(2,'0');
+                            
+            link.setAttribute("download", "RESPALDO_CHIWOWOW_MAESTRO_" + timestamp + ".json");
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -942,18 +952,28 @@
                 try {
                     let loaded = JSON.parse(e.target.result);
                     let agregados = 0;
+                    let actualizados = 0;
+                    
                     loaded.forEach(r => {
-                        if(!db.find(exist => exist.id == r.id)) {
+                        let index = db.findIndex(exist => exist.id == r.id);
+                        if (index > -1) {
+                            db[index] = r;
+                            actualizados++;
+                        } else {
                             db.push(r);
                             agregados++;
                         }
                     });
+                    
                     guardarCambios();
                     renderizarTablas();
-                    alert(`Respaldo cargado con éxito. Se agregaron ${agregados} expedientes recuperados.`);
+                    
+                    alert(`✅ Respaldo cargado con éxito.\n\n📊 Resumen:\n- Expedientes nuevos: ${agregados}\n- Expedientes actualizados: ${actualizados}`);
                 } catch(err) {
-                    alert("Error al leer el archivo. Asegúrate que sea un JSON válido.");
+                    alert("❌ Error al leer el archivo. Asegúrate que sea el JSON correcto.");
                 }
+                
+                input.value = ''; 
             };
             reader.readAsText(file);
         }
