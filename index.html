@@ -232,7 +232,8 @@
         @media print {
             body { background: white; padding: 0; margin: 0; }
             .no-print, #login-overlay, .nav-bar, .card { display: none !important; }
-            .doc-page { display: block !important; box-shadow: none; margin: 0; width: 100%; page-break-after: always; }
+            /* Se quitó el display block forzado para que solo imprima el doc activo */
+            .doc-page { box-shadow: none; margin: 0; width: 100%; } 
         }
     </style>
 </head>
@@ -258,8 +259,11 @@
 
         <div class="card no-print" id="sec-cupos" style="display:none; border-top-color: var(--primary-cupos);">
             <div class="panel-header">
-                <h2 class="panel-title" style="color: var(--primary-cupos);"><i class="fas fa-bed"></i> Disponibilidad de Habitaciones</h2>
-                <p style="margin: 0; color: #546e7a; font-size: 0.9rem;">Calculado automáticamente desde los expedientes registrados.</p>
+                <div>
+                    <h2 class="panel-title" style="color: var(--primary-cupos);"><i class="fas fa-bed"></i> Disponibilidad de Habitaciones</h2>
+                    <p style="margin: 0; color: #546e7a; font-size: 0.9rem;">Calculado automáticamente desde los expedientes registrados.</p>
+                </div>
+                <button class="btn-tool bg-print" onclick="imprimirReporteCupos()"><i class="fas fa-print"></i> Imprimir Reporte</button>
             </div>
             <div class="dashboard-grid" id="dashboard-cupos">
                 </div>
@@ -450,6 +454,34 @@
             </div>
             <div class="no-print" style="text-align:center; margin-top:50px;">
                 <button class="btn-main" style="width:350px; background:var(--brand-dark);" onclick="window.print()">🖨️ IMPRIMIR EXPEDIENTE COMPLETO</button>
+                <button class="btn-main" style="width:350px; background:#95a5a6; margin-top:15px;" onclick="mostrarSeccion('historial')">⬅️ VOLVER A EXPEDIENTES</button>
+            </div>
+        </div>
+
+        <div id="doc-reporte-cupos" class="doc-page">
+            <div class="doc-header">
+                <img src="chiwowow 2.png" style="height:80px;" onerror="this.onerror=null; this.style.display='none'">
+                <div style="text-align:right;">
+                    <h1 style="margin:0; font-family:'Montserrat'; font-size:18pt; color:var(--brand-dark);">REPORTE DE DISPONIBILIDAD</h1>
+                    <p style="color:var(--brand-gold); font-weight:800; font-size:1.2rem; margin:0;">CORTE: <span id="out_reporte_fecha"></span></p>
+                </div>
+            </div>
+            
+            <table style="width:100%; border-collapse:collapse; font-size:11pt; margin-top:20px;">
+                <thead style="background:var(--brand-dark); color:white;">
+                    <tr>
+                        <th style="padding:15px; text-align:left;">TIPO DE HABITACIÓN</th>
+                        <th style="padding:15px; text-align:center;">TOTAL INICIAL</th>
+                        <th style="padding:15px; text-align:center;">VENDIDAS</th>
+                        <th style="padding:15px; text-align:center;">DISPONIBLES</th>
+                    </tr>
+                </thead>
+                <tbody id="out_reporte_body"></tbody>
+            </table>
+            
+            <div class="no-print" style="text-align:center; margin-top:50px;">
+                <button class="btn-main" style="width:350px; background:var(--primary-cupos);" onclick="window.print()">🖨️ IMPRIMIR REPORTE AHORA</button>
+                <button class="btn-main" style="width:350px; background:#95a5a6; margin-top:15px;" onclick="mostrarSeccion('cupos')">⬅️ VOLVER A CUPOS</button>
             </div>
         </div>
 
@@ -575,6 +607,37 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // NUEVA FUNCIÓN PARA EL REPORTE DE CUPOS
+        function imprimirReporteCupos() {
+            let container = document.getElementById('out_reporte_body');
+            container.innerHTML = '';
+            
+            // Fecha para el reporte (Estilo México)
+            let fecha = new Date();
+            let opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('out_reporte_fecha').innerText = fecha.toLocaleDateString('es-MX', opcionesFecha);
+
+            Object.keys(inventory).forEach(key => {
+                const item = inventory[key];
+                const available = item.total - item.sold;
+                const isSoldOut = available <= 0;
+
+                container.innerHTML += `
+                    <tr>
+                        <td style="padding:15px; border-bottom: 1px solid #eee;">
+                            <strong>${item.label}</strong><br>
+                            <span style="color:#777; font-size:0.85rem;">${item.capacity}</span>
+                        </td>
+                        <td style="padding:15px; border-bottom: 1px solid #eee; text-align:center;">${item.total}</td>
+                        <td style="padding:15px; border-bottom: 1px solid #eee; text-align:center;">${item.sold}</td>
+                        <td style="padding:15px; border-bottom: 1px solid #eee; text-align:center; font-weight:bold; font-size:1.2rem; color:${isSoldOut ? 'var(--danger)' : 'var(--success)'};">${available}</td>
+                    </tr>
+                `;
+            });
+            
+            mostrarSeccion('impresion-reporte');
         }
 
         function guardar() {
@@ -744,7 +807,7 @@
                         </td>
                         <td>
                             <button class="btn-circle" style="background:var(--whatsapp)" onclick="enviarWA('${r.id}')" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
-                            <button class="btn-circle bg-print" onclick="prepararDocumentos('${r.id}')" title="Imprimir"><i class="fas fa-print"></i></button>
+                            <button class="btn-circle bg-print" onclick="prepararDocumentos('${r.id}')" title="Imprimir Expediente"><i class="fas fa-print"></i></button>
                             <button class="btn-circle" style="background:var(--brand-gold)" onclick="editar('${r.id}')" title="Editar"><i class="fas fa-edit"></i></button>
                             <button class="btn-circle" style="background:var(--danger)" onclick="borrar('${r.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                         </td>
@@ -888,7 +951,10 @@
         }
 
         function mostrarSeccion(sec) {
-            ['sec-registro', 'sec-historial', 'sec-crm', 'sec-cupos', 'doc-recibo', 'doc-contrato'].forEach(id => document.getElementById(id).style.display = 'none');
+            ['sec-registro', 'sec-historial', 'sec-crm', 'sec-cupos', 'doc-recibo', 'doc-contrato', 'doc-reporte-cupos'].forEach(id => {
+                let el = document.getElementById(id);
+                if(el) el.style.display = 'none';
+            });
             
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
@@ -910,6 +976,8 @@
             } else if(sec === 'impresion') {
                 document.getElementById('doc-recibo').style.display = 'block';
                 document.getElementById('doc-contrato').style.display = 'block';
+            } else if(sec === 'impresion-reporte') {
+                document.getElementById('doc-reporte-cupos').style.display = 'block';
             }
         }
 
